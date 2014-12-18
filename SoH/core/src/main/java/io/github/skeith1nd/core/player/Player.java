@@ -4,7 +4,9 @@ import static playn.core.PlayN.*;
 
 import playn.core.AssetWatcher;
 import playn.core.Image;
+import playn.core.Net;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,6 +37,34 @@ public class Player {
         });
         assetWatcher.add(spriteSheet);
         assetWatcher.start();
+
+        // Connect to socket
+        net().createWebSocket("ws://10.0.2.4:8887", new Net.WebSocket.Listener() {
+            @Override
+            public void onOpen() {
+                System.out.println("connected.");
+            }
+
+            @Override
+            public void onTextMessage(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onDataMessage(ByteBuffer msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onClose() {
+                System.out.println("closed");
+            }
+
+            @Override
+            public void onError(String reason) {
+                System.out.println("reason: " + reason);
+            }
+        });
     }
 
     // TODO: load animation information from a data file
