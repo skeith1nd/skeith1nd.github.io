@@ -10,7 +10,6 @@ public class SoH extends Game.Default {
 
     private KeyboardListener keyboardListener;
 
-
     private World world;
     private ImmediateLayer gameLayer;
 

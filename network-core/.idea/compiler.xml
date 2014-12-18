@@ -22,16 +22,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="soh-assets" />
-        <module name="soh-core" />
-        <module name="soh-java" />
+        <module name="network-core" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="soh-assets" target="1.6" />
-      <module name="soh-core" target="1.6" />
-      <module name="soh-java" target="1.6" />
-    </bytecodeTargetLevel>
   </component>
 </project>
 
