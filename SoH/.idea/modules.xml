@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SoH.iml" filepath="$PROJECT_DIR$/SoH.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets/soh-assets.iml" filepath="$PROJECT_DIR$/assets/soh-assets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/soh-core.iml" filepath="$PROJECT_DIR$/core/soh-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java/soh-java.iml" filepath="$PROJECT_DIR$/java/soh-java.iml" />
+    </modules>
+  </component>
+</project>

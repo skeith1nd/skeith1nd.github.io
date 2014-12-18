@@ -1,0 +1,11 @@
+<module rename-to='soh'>
+  <inherits name='playn.PlayN'/>
+  <inherits name='SoHAssets'/>
+
+  <source path='core'/>
+  <source path='html'/>
+
+  <public path="resources" />
+
+  <entry-point class='io.github.skeith1nd.html.SoHHtml'/>
+</module>
