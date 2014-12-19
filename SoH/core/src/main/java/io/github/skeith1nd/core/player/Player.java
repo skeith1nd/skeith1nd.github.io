@@ -21,6 +21,7 @@ public class Player {
     private byte control = 0x08;
     private boolean loaded = false;
     private String type = "";
+    private String userId = "";
 
     private Player() {}
     public static Player getInstance() {
@@ -214,5 +215,13 @@ public class Player {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

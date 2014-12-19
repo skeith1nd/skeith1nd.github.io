@@ -2,6 +2,7 @@ package io.github.skeith1nd.core.network;
 
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.network.core.commands.Commands;
+import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
 import org.json.JSONObject;
 import playn.core.Net;
@@ -38,10 +39,23 @@ public class Client {
                         playerLoginCommand.deserialize(jsonObject.toString());
 
                         // Init the game with the user information returned from the login server
+                        Player.getInstance().setUserId(playerLoginCommand.getPlayer().getUser());
                         Player.getInstance().setType(playerLoginCommand.getPlayer().getType());
                         Player.getInstance().setX(playerLoginCommand.getPlayer().getX());
                         Player.getInstance().setY(playerLoginCommand.getPlayer().getY());
                         Player.getInstance().init();
+                        break;
+                    case Commands.PLAYER_ENTER_EXIT_ROOM_COMMAND:
+                        // Get the player enter/exit command
+                        PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
+                        playerEnterExitRoomCommand.deserialize(jsonObject.toString());
+
+                        // If another player entered/exit the room, handle it
+                        if (!playerEnterExitRoomCommand.getUserId().equals(Player.getInstance().getUserId())) {
+
+                        }
+
+                        break;
                 }
             }
 

@@ -28,9 +28,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.6">
-      <module name="soh-assets" target="1.7" />
-      <module name="soh-core" target="1.7" />
-      <module name="soh-java" target="1.7" />
+      <module name="soh-assets" target="1.6" />
+      <module name="soh-core" target="1.6" />
+      <module name="soh-java" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

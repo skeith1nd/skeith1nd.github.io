@@ -54,6 +54,7 @@ public class Server extends WebSocketServer {
 
                 // Send login response
                 conn.send(playerLoginCommand.serialize().toString());
+                break;
         }
     }
 
