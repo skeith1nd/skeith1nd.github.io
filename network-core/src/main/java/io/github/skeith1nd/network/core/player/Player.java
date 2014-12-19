@@ -13,10 +13,10 @@ public class Player implements INetworkObject {
         reset();
     }
 
-    @Override
     public void reset() {
-        user = type = "";
+        user = "";
         x = y = 0;
+        type = "";
         room = new Room();
     }
 
@@ -52,14 +52,6 @@ public class Player implements INetworkObject {
         this.user = user;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public int getX() {
         return x;
     }
@@ -82,5 +74,13 @@ public class Player implements INetworkObject {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

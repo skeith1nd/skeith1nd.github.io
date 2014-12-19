@@ -4,23 +4,19 @@ import io.github.skeith1nd.core.player.Player;
 import playn.core.Surface;
 
 public class World {
-    private Player player;
+    private static World instance;
 
-    public World() {
-        player = new Player();
+    private World() {}
+    public static World getInstance() {
+        if (instance == null) {
+            instance = new World();
+        }
+        return instance;
     }
 
     public void paint(Surface surface) {
-        if (player.isLoaded()) {
-            surface.drawImage(player.getCurrentImage(), player.getX(), player.getY());
+        if (Player.getInstance().isLoaded()) {
+            surface.drawImage(Player.getInstance().getCurrentImage(), Player.getInstance().getX(), Player.getInstance().getY());
         }
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 }

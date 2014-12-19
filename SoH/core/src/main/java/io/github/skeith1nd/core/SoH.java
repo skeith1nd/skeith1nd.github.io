@@ -3,14 +3,14 @@ package io.github.skeith1nd.core;
 import static playn.core.PlayN.*;
 
 import io.github.skeith1nd.core.keyboard.KeyboardListener;
+import io.github.skeith1nd.core.network.Client;
+import io.github.skeith1nd.core.network.User;
+import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.core.world.World;
 import playn.core.*;
 
 public class SoH extends Game.Default {
-
     private KeyboardListener keyboardListener;
-
-    private World world;
     private ImmediateLayer gameLayer;
 
     public SoH() {
@@ -19,6 +19,9 @@ public class SoH extends Game.Default {
 
     @Override
     public void init() {
+        // Init user
+        Client.getInstance().connect();
+
         // Init input
         keyboardListener = new KeyboardListener();
         keyboard().setListener(keyboardListener);
@@ -28,12 +31,10 @@ public class SoH extends Game.Default {
         ImageLayer bgLayer = graphics().createImageLayer(bgImage);
         graphics().rootLayer().add(bgLayer);
 
-        world = new World();
-
         gameLayer = graphics().createImmediateLayer(new ImmediateLayer.Renderer() {
             public void render(Surface surface) {
                 surface.clear();
-                world.paint(surface);
+                World.getInstance().paint(surface);
             }
         });
         graphics().rootLayer().add(gameLayer);
@@ -43,23 +44,23 @@ public class SoH extends Game.Default {
     public void update(int delta) {
         byte control = keyboardListener.getWasd();
         if ((control & 0x01) == 0x01) {
-            world.getPlayer().moveUp();
+            Player.getInstance().moveUp();
         }
 
         if ((control & 0x02) == 0x02) {
-            world.getPlayer().moveLeft();
+            Player.getInstance().moveLeft();
         }
 
         if ((control & 0x04) == 0x04) {
-            world.getPlayer().moveDown();
+            Player.getInstance().moveDown();
         }
 
         if ((control & 0x08) == 0x08) {
-            world.getPlayer().moveRight();
+            Player.getInstance().moveRight();
         }
 
         if ((control & 0x0F) == 0x00) {
-            world.getPlayer().rest();
+            Player.getInstance().rest();
         }
     }
 

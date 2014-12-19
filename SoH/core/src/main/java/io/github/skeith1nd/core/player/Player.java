@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Player {
+    private static Player instance;
+
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
     private int x = 320;
@@ -18,9 +20,18 @@ public class Player {
     private double currentSpriteIndex = 0.0;
     private byte control = 0x08;
     private boolean loaded = false;
+    private String type = "";
 
-    public Player() {
-        spriteSheet = assets().getImage("images/characters/man1/man1.png");
+    private Player() {}
+    public static Player getInstance() {
+        if (instance == null) {
+            instance = new Player();
+        }
+        return instance;
+    }
+
+    public void init() {
+        spriteSheet = assets().getImage("images/characters/" + type + "/" + type + ".png");
         animations = new HashMap<String, ArrayList<Image>>();
 
         // Load animations after assets loaded successfully TODO: move this into main asset watcher
@@ -37,34 +48,6 @@ public class Player {
         });
         assetWatcher.add(spriteSheet);
         assetWatcher.start();
-
-        // Connect to socket
-        net().createWebSocket("ws://10.0.2.4:8887", new Net.WebSocket.Listener() {
-            @Override
-            public void onOpen() {
-                System.out.println("connected.");
-            }
-
-            @Override
-            public void onTextMessage(String msg) {
-                System.out.println(msg);
-            }
-
-            @Override
-            public void onDataMessage(ByteBuffer msg) {
-                System.out.println(msg);
-            }
-
-            @Override
-            public void onClose() {
-                System.out.println("closed");
-            }
-
-            @Override
-            public void onError(String reason) {
-                System.out.println("reason: " + reason);
-            }
-        });
     }
 
     // TODO: load animation information from a data file
@@ -223,5 +206,13 @@ public class Player {
 
     public void setControl(byte control) {
         this.control = control;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

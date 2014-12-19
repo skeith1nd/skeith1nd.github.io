@@ -1,10 +1,16 @@
 package io.github.skeith1nd.websocket;
 
+import io.github.skeith1nd.data.Database;
+import io.github.skeith1nd.network.core.INetworkObject;
+import io.github.skeith1nd.network.core.commands.Commands;
+import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
+import io.github.skeith1nd.network.core.player.Player;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,34 +30,41 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        this.sendToAll( "new connection: " + handshake.getResourceDescriptor() );
-        System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!" );
+        // User connects
     }
 
     @Override
     public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-        this.sendToAll( conn + " has left the room!" );
-        System.out.println( conn + " has left the room!" );
+        // User disconnects
     }
 
     @Override
     public void onMessage( WebSocket conn, String message ) {
-        this.sendToAll( message );
-        System.out.println( conn + ": " + message );
+        // User sends message
+        JSONObject jsonObject = new JSONObject(message);
+        switch (jsonObject.getInt("type")) {
+            case Commands.PLAYER_LOGIN_COMMAND:
+                // Get the player login command
+                PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
+                playerLoginCommand.deserialize(jsonObject.toString());
+
+                // Access database to get player object to send to user
+                playerLoginCommand.setPlayer(Database.getInstance().getPlayer(playerLoginCommand.getUserId()));
+                playerLoginCommand.setSuccess(true);
+
+                // Send login response
+                conn.send(playerLoginCommand.serialize().toString());
+        }
     }
 
     @Override
     public void onFragment( WebSocket conn, Framedata fragment ) {
-        System.out.println( "received fragment: " + fragment );
+        // Not sure
     }
 
     public static void main( String[] args ) throws InterruptedException , IOException {
         WebSocketImpl.DEBUG = true;
-        int port = 8887; // 843 flash policy port
-        try {
-            port = Integer.parseInt( args[ 0 ] );
-        } catch ( Exception ex ) {
-        }
+        int port = 8887;
         Server s = new Server( port );
         s.start();
         System.out.println( "Server started on port: " + s.getPort() );
@@ -59,7 +72,6 @@ public class Server extends WebSocketServer {
         BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
         while ( true ) {
             String in = sysin.readLine();
-            s.sendToAll( in );
             if( in.equals( "exit" ) ) {
                 s.stop();
                 break;

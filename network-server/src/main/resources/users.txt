@@ -1,0 +1,18 @@
+{
+    "skeith1nd" : {
+        "name" : "steve",
+        "level" : 1,
+        "room" : 1,
+        "x" : 200,
+        "y" : 200,
+        "type" : "man1"
+    },
+    "danielpuder" : {
+        "name" : "daniel",
+        "level" : 1,
+        "room" : 1,
+        "x" : 250,
+        "y" : 220,
+        "type" : "man1"
+    }
+}
