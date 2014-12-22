@@ -2,15 +2,12 @@ package io.github.skeith1nd.network.core.commands.player;
 
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
-import io.github.skeith1nd.network.core.player.Player;
-import io.github.skeith1nd.network.core.room.Room;
 import org.json.JSONObject;
 
 public class PlayerLoginCommand extends Command {
     private String userId;
     private boolean success;
-    private Player player;
-    private Room room;
+    private JSONObject player, room;
 
     public PlayerLoginCommand() {
         reset();
@@ -18,7 +15,8 @@ public class PlayerLoginCommand extends Command {
 
     public PlayerLoginCommand(String userId) {
         this.success = false;
-        this.player = new Player();
+        this.player = new JSONObject();
+        this.room = new JSONObject();
         this.userId = userId;
     }
 
@@ -28,8 +26,8 @@ public class PlayerLoginCommand extends Command {
         result.put("userId", userId);
         result.put("type", type);
         result.put("success", success);
-        result.put("player", player.serialize());
-        result.put("room", room.serialize());
+        result.put("player", player);
+        result.put("room", room);
 
         return result;
     }
@@ -42,16 +40,16 @@ public class PlayerLoginCommand extends Command {
 
         userId = jsonObject.getString("userId");
         success = jsonObject.getBoolean("success");
-        player.deserialize(jsonObject.getJSONObject("player").toString());
-        room.deserialize(jsonObject.getJSONObject("room").toString());
+        player = jsonObject.getJSONObject("player");
+        room = jsonObject.getJSONObject("room");
     }
 
     @Override
     public void reset() {
         userId = "";
         success = false;
-        player = new Player();
-        room = new Room();
+        player = new JSONObject();
+        room = new JSONObject();
         type = Commands.PLAYER_LOGIN_COMMAND;
     }
 
@@ -71,19 +69,19 @@ public class PlayerLoginCommand extends Command {
         this.success = success;
     }
 
-    public Player getPlayer() {
+    public JSONObject getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(JSONObject player) {
         this.player = player;
     }
 
-    public Room getRoom() {
+    public JSONObject getRoom() {
         return room;
     }
 
-    public void setRoom(Room room) {
+    public void setRoom(JSONObject room) {
         this.room = room;
     }
 }

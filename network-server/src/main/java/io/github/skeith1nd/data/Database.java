@@ -1,7 +1,6 @@
 package io.github.skeith1nd.data;
 
-import io.github.skeith1nd.network.core.INetworkObject;
-import io.github.skeith1nd.network.core.player.Player;
+import io.github.skeith1nd.game.ServerPlayer;
 import org.json.JSONObject;
 
 public class Database {
@@ -34,13 +33,13 @@ public class Database {
         return instance;
     }
 
-    public Player getPlayer(String userId) {
-        Player result = new Player();
-
+    public ServerPlayer getPlayer(String userId) {
         JSONObject jsonObject = new JSONObject(data);
         JSONObject jsonUser = jsonObject.getJSONObject(userId);
 
-        result.setUser(userId);
+        ServerPlayer result = new ServerPlayer();
+
+        result.setUserId(userId);
         result.setType(jsonUser.getString("type"));
         result.setX(jsonUser.getInt("x"));
         result.setY(jsonUser.getInt("y"));

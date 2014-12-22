@@ -2,7 +2,8 @@ package io.github.skeith1nd.core.player;
 
 import static playn.core.PlayN.*;
 
-import io.github.skeith1nd.network.core.room.Room;
+import io.github.skeith1nd.core.world.ClientRoom;
+import org.json.JSONObject;
 import playn.core.AssetWatcher;
 import playn.core.Image;
 
@@ -21,7 +22,7 @@ public class Player {
     private boolean loaded = false;
     private String type = "";
     private String userId = "";
-    private Room room;
+    private ClientRoom room;
 
     private Player() {}
     public static Player getInstance() {
@@ -29,6 +30,26 @@ public class Player {
             instance = new Player();
         }
         return instance;
+    }
+
+    public void fromJSON(JSONObject playerJSON, JSONObject roomJSON) {
+        x = playerJSON.getInt("x");
+        y = playerJSON.getInt("y");
+        type = playerJSON.getString("type");
+        userId = playerJSON.getString("userId");
+
+        room = new ClientRoom();
+        room.fromJSON(roomJSON);
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("x", x);
+        jsonObject.put("y", y);
+        jsonObject.put("type", type);
+        jsonObject.put("userId", userId);
+        jsonObject.put("room", room.toJSON());
+        return jsonObject;
     }
 
     public void init() {
@@ -225,11 +246,11 @@ public class Player {
         this.userId = userId;
     }
 
-    public Room getRoom() {
+    public ClientRoom getRoom() {
         return room;
     }
 
-    public void setRoom(Room room) {
+    public void setRoom(ClientRoom room) {
         this.room = room;
     }
 }

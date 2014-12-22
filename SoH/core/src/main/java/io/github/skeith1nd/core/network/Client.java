@@ -1,6 +1,7 @@
 package io.github.skeith1nd.core.network;
 
 import io.github.skeith1nd.core.player.Player;
+import io.github.skeith1nd.core.world.World;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
@@ -24,7 +25,7 @@ public class Client {
             public void onOpen() {
                 // Connected the websocket. Now attempt to "login" using User credentials
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                playerLoginCommand.setUserId("danielpuder");
+                playerLoginCommand.setUserId("skeith1nd");
                 socket.send(playerLoginCommand.serialize().toString());
             }
 
@@ -41,11 +42,7 @@ public class Client {
                         playerLoginCommand.deserialize(jsonObject.toString());
 
                         // Init the game with the user information returned from the login server
-                        Player.getInstance().setUserId(playerLoginCommand.getPlayer().getUser());
-                        Player.getInstance().setType(playerLoginCommand.getPlayer().getType());
-                        Player.getInstance().setX(playerLoginCommand.getPlayer().getX());
-                        Player.getInstance().setY(playerLoginCommand.getPlayer().getY());
-                        Player.getInstance().setRoom(playerLoginCommand.getRoom());
+                        Player.getInstance().fromJSON(playerLoginCommand.getPlayer(), playerLoginCommand.getRoom());
                         Player.getInstance().init();
                         break;
                     case Commands.PLAYER_ENTER_EXIT_ROOM_COMMAND:
@@ -55,15 +52,15 @@ public class Client {
                         PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
                         playerEnterExitRoomCommand.deserialize(jsonObject.toString());
 
+                        // Get player id
+                        String playerId = playerEnterExitRoomCommand.getPlayer().getString("userId");
+
                         // If another player entered/exit the room, update player's room object
-                        if (!playerEnterExitRoomCommand.getPlayer().getUser().equals(Player.getInstance().getUserId())) {
+                        if (!playerId.equals(Player.getInstance().getUserId())) {
                             if (playerEnterExitRoomCommand.isEnter()) {
-                                Player.getInstance().getRoom().getPlayers().put(
-                                        playerEnterExitRoomCommand.getPlayer().getUser(),
-                                        playerEnterExitRoomCommand.getPlayer()
-                                );
+                                Player.getInstance().getRoom().addOrUpdatePlayer(playerEnterExitRoomCommand.getPlayer());
                             } else {
-                                Player.getInstance().getRoom().getPlayers().remove(playerEnterExitRoomCommand.getPlayer().getUser());
+                                Player.getInstance().getRoom().removePlayer(playerId);
                             }
                         }
 

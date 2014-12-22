@@ -1,12 +1,11 @@
 package io.github.skeith1nd.websocket;
 
 import io.github.skeith1nd.data.Database;
+import io.github.skeith1nd.game.ServerPlayer;
 import io.github.skeith1nd.game.ServerRoom;
-import io.github.skeith1nd.data.User;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
-import io.github.skeith1nd.network.core.player.Player;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
@@ -22,7 +21,7 @@ import java.util.HashMap;
 
 public class Server extends WebSocketServer {
     private HashMap<String, ServerRoom> rooms = new HashMap<String, ServerRoom>();
-    private HashMap<WebSocket, Player> connections = new HashMap<WebSocket, Player>();
+    private HashMap<String, ServerPlayer> connections = new HashMap<String, ServerPlayer>();
 
     public Server( int port ) throws UnknownHostException {
         super( new InetSocketAddress( port ) );
@@ -43,12 +42,7 @@ public class Server extends WebSocketServer {
     @Override
     public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
         // User disconnects, send exit room command to all other players in room
-        Player player = connections.get(conn);
-        PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
-        playerEnterExitRoomCommand.setEnter(false);
-        playerEnterExitRoomCommand.setPlayer(player);
-        playerEnterExitRoomCommand.setRoomId(player.getRoomId());
-        sendToAllInRoom(player.getRoomId(), playerEnterExitRoomCommand.serialize().toString());
+
     }
 
     @Override
@@ -62,26 +56,27 @@ public class Server extends WebSocketServer {
                 playerLoginCommand.deserialize(jsonObject.toString());
 
                 // Access database to get player object to send to user
-                Player player = Database.getInstance().getPlayer(playerLoginCommand.getUserId());
-                playerLoginCommand.setPlayer(player);
+                ServerPlayer serverPlayer = Database.getInstance().getPlayer(playerLoginCommand.getUserId());
+                serverPlayer.setWebSocket(conn);
+                connections.put(serverPlayer.getUserId(), serverPlayer);
+
+                // Get the player room
+                ServerRoom serverRoom = rooms.get(serverPlayer.getRoomId());
+                serverRoom.getPlayers().put(serverPlayer.getUserId(), serverPlayer);
+
+                playerLoginCommand.setRoom(serverRoom.toJSON());
+                playerLoginCommand.setPlayer(serverPlayer.toJSON());
                 playerLoginCommand.setSuccess(true);
 
                 // Send login response
                 conn.send(playerLoginCommand.serialize().toString());
 
-                // Create user
-                User user = new User(conn, player);
-                connections.put(conn, player);
-
-                // Add user to the room
-                rooms.get(player.getRoomId()).getUsers().put(player.getUser(), user);
-
                 // Send player enter room to all players in room
                 PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
                 playerEnterExitRoomCommand.setEnter(true);
-                playerEnterExitRoomCommand.setPlayer(player);
-                playerEnterExitRoomCommand.setRoomId(player.getRoomId());
-                sendToAllInRoom(player.getRoomId(), playerEnterExitRoomCommand.serialize().toString());
+                playerEnterExitRoomCommand.setPlayer(serverPlayer.toJSON());
+                playerEnterExitRoomCommand.setRoomId(serverPlayer.getRoomId());
+                sendToAllInRoom(serverPlayer.getRoomId(), playerEnterExitRoomCommand.serialize().toString());
 
                 break;
         }
@@ -117,9 +112,9 @@ public class Server extends WebSocketServer {
 
     private void sendToAllInRoom(String roomId, String jsonMessage) {
         ServerRoom room = rooms.get(roomId);
-        HashMap<String, User> users = room.getUsers();
-        for (User user : users.values()) {
-            user.getWebSocket().send(jsonMessage);
+        HashMap<String, ServerPlayer> players = room.getPlayers();
+        for (ServerPlayer player : players.values()) {
+            player.getWebSocket().send(jsonMessage);
         }
     }
 }

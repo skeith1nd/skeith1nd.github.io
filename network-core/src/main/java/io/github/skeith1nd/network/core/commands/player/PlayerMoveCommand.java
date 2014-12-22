@@ -2,7 +2,6 @@ package io.github.skeith1nd.network.core.commands.player;
 
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
-import io.github.skeith1nd.network.core.player.Player;
 import org.json.JSONObject;
 
 public class PlayerMoveCommand extends Command {
@@ -11,14 +10,14 @@ public class PlayerMoveCommand extends Command {
     private static final int MOVE_DOWN = 0x03;
     private static final int MOVE_RIGHT = 0x04;
 
-    private Player player;
+    private JSONObject player;
     private int direction;
 
     public PlayerMoveCommand() {
         reset();
     }
 
-    public PlayerMoveCommand(Player player, int direction) {
+    public PlayerMoveCommand(JSONObject player, int direction) {
         this.type = Commands.PLAYER_MOVE_COMMAND;
         this.player = player;
         this.direction = direction;
@@ -27,7 +26,7 @@ public class PlayerMoveCommand extends Command {
     @Override
     public void reset() {
         this.type = Commands.PLAYER_MOVE_COMMAND;
-        this.player = new Player();
+        this.player = new JSONObject();
         this.type = MOVE_UP;
     }
 
@@ -39,7 +38,7 @@ public class PlayerMoveCommand extends Command {
     @Override
     public JSONObject serialize() {
         JSONObject result = new JSONObject();
-        result.put("player", player.serialize());
+        result.put("player", player);
         result.put("type", type);
         result.put("direction", direction);
 
@@ -52,7 +51,7 @@ public class PlayerMoveCommand extends Command {
 
         reset();
 
-        player.deserialize(jsonObject.getJSONObject("player").toString());
+        player = jsonObject.getJSONObject("player");
         direction = jsonObject.getInt("direction");
     }
 }

@@ -2,12 +2,11 @@ package io.github.skeith1nd.network.core.commands.player;
 
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
-import io.github.skeith1nd.network.core.player.Player;
 import org.json.JSONObject;
 
 public class PlayerEnterExitRoomCommand extends Command {
     private boolean enter;
-    private Player player;
+    private JSONObject player;
     private String roomId;
 
     public PlayerEnterExitRoomCommand() {
@@ -20,7 +19,7 @@ public class PlayerEnterExitRoomCommand extends Command {
         result.put("type", type);
         result.put("enter", enter);
         result.put("roomId", roomId);
-        result.put("player", player.serialize());
+        result.put("player", player);
 
         return result;
     }
@@ -33,14 +32,14 @@ public class PlayerEnterExitRoomCommand extends Command {
 
         enter = jsonObject.getBoolean("enter");
         roomId = jsonObject.getString("roomId");
-        player.deserialize(jsonObject.getJSONObject("player").toString());
+        player = jsonObject.getJSONObject("player");
     }
 
     @Override
     public void reset() {
         type = Commands.PLAYER_ENTER_EXIT_ROOM_COMMAND;
         enter = true;
-        player = new Player();
+        player = new JSONObject();
     }
 
     public boolean isEnter() {
@@ -51,11 +50,11 @@ public class PlayerEnterExitRoomCommand extends Command {
         this.enter = enter;
     }
 
-    public Player getPlayer() {
+    public JSONObject getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(JSONObject player) {
         this.player = player;
     }
 

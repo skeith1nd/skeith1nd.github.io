@@ -1,6 +1,6 @@
 package io.github.skeith1nd.core.player;
 
-import io.github.skeith1nd.network.core.room.Room;
+import org.json.JSONObject;
 import playn.core.AssetWatcher;
 import playn.core.Image;
 
@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 import static playn.core.PlayN.assets;
 
-public class OtherPlayer {
+public class ClientPlayer {
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
     private int x = 320;
@@ -19,7 +19,25 @@ public class OtherPlayer {
     private boolean loaded = false;
     private String type = "";
     private String userId = "";
-    private Room room;
+    private String roomId = "";
+
+    public void fromJSON(JSONObject jsonObject) {
+        x = jsonObject.getInt("x");
+        y = jsonObject.getInt("y");
+        type = jsonObject.getString("type");
+        roomId = jsonObject.getString("roomId");
+        userId = jsonObject.getString("userId");
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("x", x);
+        jsonObject.put("y", y);
+        jsonObject.put("type", type);
+        jsonObject.put("roomId", roomId);
+        jsonObject.put("userId", userId);
+        return jsonObject;
+    }
 
     public void init() {
         spriteSheet = assets().getImage("images/characters/" + type + "/" + type + ".png");
@@ -213,13 +231,5 @@ public class OtherPlayer {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 }

@@ -4,7 +4,6 @@ import static playn.core.PlayN.*;
 
 import io.github.skeith1nd.core.keyboard.KeyboardListener;
 import io.github.skeith1nd.core.network.Client;
-import io.github.skeith1nd.core.network.User;
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.core.world.World;
 import playn.core.*;

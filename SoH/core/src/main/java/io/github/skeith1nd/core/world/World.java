@@ -1,18 +1,13 @@
 package io.github.skeith1nd.core.world;
 
+import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
-import io.github.skeith1nd.network.core.room.Room;
 import playn.core.Surface;
-
-import java.util.HashMap;
 
 public class World {
     private static World instance;
-    private HashMap<String, Room> rooms;
 
     private World() {
-        rooms = new HashMap<String, Room>();
-        initializeRooms();
     }
 
     public static World getInstance() {
@@ -27,15 +22,10 @@ public class World {
             surface.drawImage(Player.getInstance().getCurrentImage(), Player.getInstance().getX(), Player.getInstance().getY());
 
             // Draw other players in the room
-            for (io.github.skeith1nd.network.core.player.Player player : Player.getInstance().getRoom().getPlayers().values()) {
-                surface.drawImage()
+            for (ClientPlayer player : Player.getInstance().getRoom().getPlayers().values()) {
+                if (!player.getUserId().equals(Player.getInstance().getUserId()) && player.isLoaded())
+                    surface.drawImage(player.getCurrentImage(), player.getX(), player.getY());
             }
         }
-    }
-
-    private void initializeRooms() {
-        Room room1 = new Room();
-        room1.setRoomId("1");
-        rooms.put("1", room1);
     }
 }
