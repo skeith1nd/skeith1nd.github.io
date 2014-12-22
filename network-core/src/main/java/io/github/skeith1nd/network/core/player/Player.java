@@ -5,19 +5,16 @@ import io.github.skeith1nd.network.core.room.Room;
 import org.json.JSONObject;
 
 public class Player implements INetworkObject {
-    private String user, type;
+    private String user, type, roomId;
     private int x, y;
-    private Room room;
 
     public Player() {
         reset();
     }
 
     public void reset() {
-        user = "";
+        user = type = roomId = "";
         x = y = 0;
-        type = "";
-        room = new Room();
     }
 
     @Override
@@ -27,7 +24,7 @@ public class Player implements INetworkObject {
         result.put("type", type);
         result.put("x", x);
         result.put("y", y);
-        result.put("room", room.serialize());
+        result.put("room", roomId);
         return result;
     }
 
@@ -41,7 +38,7 @@ public class Player implements INetworkObject {
         type = jsonObject.getString("type");
         x = jsonObject.getInt("x");
         y = jsonObject.getInt("y");
-        room.deserialize(jsonObject.getJSONObject("room").toString());
+        roomId = jsonObject.getString("room");
     }
 
     public String getUser() {
@@ -68,19 +65,19 @@ public class Player implements INetworkObject {
         this.y = y;
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
     public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 }

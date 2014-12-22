@@ -1,13 +1,14 @@
 package io.github.skeith1nd.websocket;
 
 import io.github.skeith1nd.data.Database;
-import io.github.skeith1nd.network.core.INetworkObject;
+import io.github.skeith1nd.game.ServerRoom;
+import io.github.skeith1nd.data.User;
 import io.github.skeith1nd.network.core.commands.Commands;
+import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
 import io.github.skeith1nd.network.core.player.Player;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
-import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONObject;
@@ -17,11 +18,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.Collection;
+import java.util.HashMap;
 
 public class Server extends WebSocketServer {
+    private HashMap<String, ServerRoom> rooms = new HashMap<String, ServerRoom>();
+    private HashMap<WebSocket, Player> connections = new HashMap<WebSocket, Player>();
+
     public Server( int port ) throws UnknownHostException {
         super( new InetSocketAddress( port ) );
+
+        ServerRoom serverRoom = new ServerRoom("1");
+        rooms.put(serverRoom.getRoomId(), serverRoom);
     }
 
     public Server( InetSocketAddress address ) {
@@ -35,7 +42,13 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-        // User disconnects
+        // User disconnects, send exit room command to all other players in room
+        Player player = connections.get(conn);
+        PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
+        playerEnterExitRoomCommand.setEnter(false);
+        playerEnterExitRoomCommand.setPlayer(player);
+        playerEnterExitRoomCommand.setRoomId(player.getRoomId());
+        sendToAllInRoom(player.getRoomId(), playerEnterExitRoomCommand.serialize().toString());
     }
 
     @Override
@@ -49,18 +62,29 @@ public class Server extends WebSocketServer {
                 playerLoginCommand.deserialize(jsonObject.toString());
 
                 // Access database to get player object to send to user
-                playerLoginCommand.setPlayer(Database.getInstance().getPlayer(playerLoginCommand.getUserId()));
+                Player player = Database.getInstance().getPlayer(playerLoginCommand.getUserId());
+                playerLoginCommand.setPlayer(player);
                 playerLoginCommand.setSuccess(true);
 
                 // Send login response
                 conn.send(playerLoginCommand.serialize().toString());
+
+                // Create user
+                User user = new User(conn, player);
+                connections.put(conn, player);
+
+                // Add user to the room
+                rooms.get(player.getRoomId()).getUsers().put(player.getUser(), user);
+
+                // Send player enter room to all players in room
+                PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
+                playerEnterExitRoomCommand.setEnter(true);
+                playerEnterExitRoomCommand.setPlayer(player);
+                playerEnterExitRoomCommand.setRoomId(player.getRoomId());
+                sendToAllInRoom(player.getRoomId(), playerEnterExitRoomCommand.serialize().toString());
+
                 break;
         }
-    }
-
-    @Override
-    public void onFragment( WebSocket conn, Framedata fragment ) {
-        // Not sure
     }
 
     public static void main( String[] args ) throws InterruptedException , IOException {
@@ -91,20 +115,11 @@ public class Server extends WebSocketServer {
         }
     }
 
-    /**
-     * Sends <var>text</var> to all currently connected WebSocket clients.
-     *
-     * @param text
-     *            The String to send across the network.
-     * @throws InterruptedException
-     *             When socket related I/O errors occur.
-     */
-    public void sendToAll( String text ) {
-        Collection<WebSocket> con = connections();
-        synchronized ( con ) {
-            for( WebSocket c : con ) {
-                c.send( text );
-            }
+    private void sendToAllInRoom(String roomId, String jsonMessage) {
+        ServerRoom room = rooms.get(roomId);
+        HashMap<String, User> users = room.getUsers();
+        for (User user : users.values()) {
+            user.getWebSocket().send(jsonMessage);
         }
     }
 }

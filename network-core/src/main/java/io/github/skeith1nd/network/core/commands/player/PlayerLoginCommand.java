@@ -3,12 +3,14 @@ package io.github.skeith1nd.network.core.commands.player;
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.player.Player;
+import io.github.skeith1nd.network.core.room.Room;
 import org.json.JSONObject;
 
 public class PlayerLoginCommand extends Command {
     private String userId;
     private boolean success;
     private Player player;
+    private Room room;
 
     public PlayerLoginCommand() {
         reset();
@@ -27,6 +29,7 @@ public class PlayerLoginCommand extends Command {
         result.put("type", type);
         result.put("success", success);
         result.put("player", player.serialize());
+        result.put("room", room.serialize());
 
         return result;
     }
@@ -40,6 +43,7 @@ public class PlayerLoginCommand extends Command {
         userId = jsonObject.getString("userId");
         success = jsonObject.getBoolean("success");
         player.deserialize(jsonObject.getJSONObject("player").toString());
+        room.deserialize(jsonObject.getJSONObject("room").toString());
     }
 
     @Override
@@ -47,6 +51,7 @@ public class PlayerLoginCommand extends Command {
         userId = "";
         success = false;
         player = new Player();
+        room = new Room();
         type = Commands.PLAYER_LOGIN_COMMAND;
     }
 
@@ -72,5 +77,13 @@ public class PlayerLoginCommand extends Command {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

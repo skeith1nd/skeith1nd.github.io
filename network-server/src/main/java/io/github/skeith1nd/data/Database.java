@@ -12,7 +12,7 @@ public class Database {
             "    \"skeith1nd\" : {\n" +
             "        \"name\" : \"steve\",\n" +
             "        \"level\" : 1,\n" +
-            "        \"room\" : 1,\n" +
+            "        \"roomId\" : \"1\",\n" +
             "        \"x\" : 200,\n" +
             "        \"y\" : 200,\n" +
             "        \"type\" : \"man1\"\n" +
@@ -20,7 +20,7 @@ public class Database {
             "    \"danielpuder\" : {\n" +
             "        \"name\" : \"daniel\",\n" +
             "        \"level\" : 1,\n" +
-            "        \"room\" : 1,\n" +
+            "        \"roomId\" : \"1\",\n" +
             "        \"x\" : 250,\n" +
             "        \"y\" : 220,\n" +
             "        \"type\" : \"man1\"\n" +
@@ -44,6 +44,7 @@ public class Database {
         result.setType(jsonUser.getString("type"));
         result.setX(jsonUser.getInt("x"));
         result.setY(jsonUser.getInt("y"));
+        result.setRoomId(jsonUser.getString("roomId"));
 
         return result;
     }

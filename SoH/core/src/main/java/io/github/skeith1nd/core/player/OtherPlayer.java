@@ -1,7 +1,5 @@
 package io.github.skeith1nd.core.player;
 
-import static playn.core.PlayN.*;
-
 import io.github.skeith1nd.network.core.room.Room;
 import playn.core.AssetWatcher;
 import playn.core.Image;
@@ -9,9 +7,9 @@ import playn.core.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Player {
-    private static Player instance;
+import static playn.core.PlayN.assets;
 
+public class OtherPlayer {
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
     private int x = 320;
@@ -22,14 +20,6 @@ public class Player {
     private String type = "";
     private String userId = "";
     private Room room;
-
-    private Player() {}
-    public static Player getInstance() {
-        if (instance == null) {
-            instance = new Player();
-        }
-        return instance;
-    }
 
     public void init() {
         spriteSheet = assets().getImage("images/characters/" + type + "/" + type + ".png");
