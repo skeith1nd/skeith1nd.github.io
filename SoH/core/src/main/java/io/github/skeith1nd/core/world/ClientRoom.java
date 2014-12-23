@@ -1,8 +1,9 @@
 package io.github.skeith1nd.core.world;
 
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import io.github.skeith1nd.core.player.ClientPlayer;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -15,11 +16,11 @@ public class ClientRoom {
     }
 
     public void fromJSON(JSONObject jsonObject) {
-        JSONArray jsonArray = jsonObject.getJSONArray("players");
-        roomId = jsonObject.getString("roomId");
+        JSONArray jsonArray = jsonObject.get("players").isArray();
+        roomId = jsonObject.get("roomId").isString().stringValue();
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject obj = jsonArray.getJSONObject(i);
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject obj = jsonArray.get(i).isObject();
             ClientPlayer clientPlayer = new ClientPlayer();
             clientPlayer.fromJSON(obj);
             clientPlayer.init();
@@ -29,11 +30,11 @@ public class ClientRoom {
 
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("roomId", roomId);
+        jsonObject.put("roomId", new JSONString(roomId));
 
         JSONArray jsonArray = new JSONArray();
         for (ClientPlayer clientPlayer : players.values()) {
-            jsonArray.put(clientPlayer);
+            jsonArray.set(jsonArray.size(), clientPlayer.toJSON());
         }
 
         jsonObject.put("players", jsonArray);

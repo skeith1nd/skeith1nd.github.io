@@ -81,7 +81,14 @@
       <scope>test</scope>
     </dependency>
     <!-- End Google App Engine dependencies -->
+
+      <dependency>
+          <groupId>io.github.skeith1nd</groupId>
+          <artifactId>network-core</artifactId>
+          <version>1.0-SNAPSHOT</version>
+      </dependency>
   </dependencies>
+
 
   <build>
     <plugins>

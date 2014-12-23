@@ -1,5 +1,7 @@
 package io.github.skeith1nd.websocket;
 
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.json.client.JSONObject;
 import io.github.skeith1nd.data.Database;
 import io.github.skeith1nd.game.CommandProcessor;
 import io.github.skeith1nd.game.Engine;
@@ -13,7 +15,6 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,8 +51,8 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onMessage( WebSocket conn, String message ) {
-        JSONObject jsonObject = new JSONObject(message);
-        switch (jsonObject.getInt("type")) {
+        JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(message));
+        switch ((int)jsonObject.get("type").isNumber().doubleValue()) {
             case Commands.PLAYER_LOGIN_COMMAND:
                 // Get the player login command
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();

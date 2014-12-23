@@ -1,6 +1,8 @@
 package io.github.skeith1nd.core.player;
 
-import org.json.JSONObject;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import playn.core.AssetWatcher;
 import playn.core.Image;
 
@@ -22,20 +24,20 @@ public class ClientPlayer {
     private String roomId = "";
 
     public void fromJSON(JSONObject jsonObject) {
-        x = jsonObject.getInt("x");
-        y = jsonObject.getInt("y");
-        type = jsonObject.getString("type");
-        roomId = jsonObject.getString("roomId");
-        userId = jsonObject.getString("userId");
+        x = (int)jsonObject.get("x").isNumber().doubleValue();
+        y = (int)jsonObject.get("y").isNumber().doubleValue();
+        type = jsonObject.get("type").isString().stringValue();
+        roomId = jsonObject.get("roomId").isString().stringValue();
+        userId = jsonObject.get("userId").isString().stringValue();
     }
 
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("x", x);
-        jsonObject.put("y", y);
-        jsonObject.put("type", type);
-        jsonObject.put("roomId", roomId);
-        jsonObject.put("userId", userId);
+        jsonObject.put("x", new JSONNumber(x));
+        jsonObject.put("y", new JSONNumber(y));
+        jsonObject.put("type", new JSONString(type));
+        jsonObject.put("roomId", new JSONString(roomId));
+        jsonObject.put("userId", new JSONString(userId));
         return jsonObject;
     }
 

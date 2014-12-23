@@ -1,8 +1,10 @@
 package io.github.skeith1nd.network.core.commands.player;
 
+import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
-import org.json.JSONObject;
 
 public class PlayerMoveCommand extends Command {
     public static final int MOVE_UP = 0x01;
@@ -43,9 +45,9 @@ public class PlayerMoveCommand extends Command {
     public JSONObject serialize() {
         JSONObject result = new JSONObject();
         result.put("player", player);
-        result.put("type", type);
-        result.put("direction", direction);
-        result.put("validated", validated);
+        result.put("type", new JSONNumber(type));
+        result.put("direction", new JSONNumber(direction));
+        result.put("validated", JSONBoolean.getInstance(validated));
 
         return result;
     }
@@ -54,9 +56,9 @@ public class PlayerMoveCommand extends Command {
     public void deserialize(JSONObject jsonObject) {
         reset();
 
-        player = jsonObject.getJSONObject("player");
-        direction = jsonObject.getInt("direction");
-        validated = jsonObject.getBoolean("validated");
+        player = jsonObject.get("player").isObject();
+        direction = (int)jsonObject.get("direction").isNumber().doubleValue();
+        validated = jsonObject.get("validated").isBoolean().booleanValue();
     }
 
     public JSONObject getPlayer() {

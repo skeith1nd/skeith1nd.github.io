@@ -1,14 +1,14 @@
 package io.github.skeith1nd.core.network;
 
-import io.github.skeith1nd.core.game.CommandProcessor;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.json.client.JSONObject;
 import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
-import io.github.skeith1nd.core.world.World;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
-import org.json.JSONObject;
+import playn.core.Json;
 import playn.core.Net;
 
 import java.nio.ByteBuffer;
@@ -30,7 +30,7 @@ public class Client {
             public void onOpen() {
                 // Connected the websocket. Now attempt to "login" using User credentials
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                playerLoginCommand.setUserId("skeith1nd");
+                playerLoginCommand.setUserId("danielpuder");
                 socket.send(playerLoginCommand.serialize().toString());
                 connected = true;
             }
@@ -38,8 +38,8 @@ public class Client {
             @Override
             public void onTextMessage(String message) {
                 // Handle message from server
-                JSONObject jsonObject = new JSONObject(message);
-                switch (jsonObject.getInt("type")) {
+                JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(message));
+                switch ((int)jsonObject.get("type").isNumber().doubleValue()) {
                     case Commands.PLAYER_LOGIN_COMMAND:
                         System.out.println("Player login command");
 
@@ -59,7 +59,7 @@ public class Client {
                         playerEnterExitRoomCommand.deserialize(jsonObject);
 
                         // Get player id
-                        String playerId = playerEnterExitRoomCommand.getPlayer().getString("userId");
+                        String playerId = playerEnterExitRoomCommand.getPlayer().get("userId").isString().stringValue();
 
                         // If another player entered/exit the room, update player's room object
                         if (!playerId.equals(Player.getInstance().getUserId())) {
@@ -76,6 +76,36 @@ public class Client {
                         // Get the move command
                         PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand();
                         playerMoveCommand.deserialize(jsonObject);
+
+                        // Process
+                        if (playerMoveCommand.getPlayer().get("userId").isString().stringValue().equals(Player.getInstance().getUserId())) {
+                            // If invalid, snap player back to last valid position
+                            if (!playerMoveCommand.isValidated()) {
+                                Player.getInstance().setX((int)playerMoveCommand.getPlayer().get("x").isNumber().doubleValue());
+                                Player.getInstance().setY((int)playerMoveCommand.getPlayer().get("y").isNumber().doubleValue());
+                            }
+                        } else {
+                            // If valid, send move command to client player
+                            if (playerMoveCommand.isValidated()) {
+                                String userId = playerMoveCommand.getPlayer().get("userId").isString().stringValue();
+                                ClientPlayer clientPlayer = Player.getInstance().getRoom().getPlayers().get(userId);
+
+                                switch (playerMoveCommand.getDirection()) {
+                                    case PlayerMoveCommand.MOVE_UP:
+                                        clientPlayer.moveUp();
+                                        break;
+                                    case PlayerMoveCommand.MOVE_LEFT:
+                                        clientPlayer.moveLeft();
+                                        break;
+                                    case PlayerMoveCommand.MOVE_DOWN:
+                                        clientPlayer.moveDown();
+                                        break;
+                                    case PlayerMoveCommand.MOVE_RIGHT:
+                                        clientPlayer.moveRight();
+                                        break;
+                                }
+                            }
+                        }
 
                         break;
                 }

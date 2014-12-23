@@ -1,8 +1,11 @@
 package io.github.skeith1nd.network.core.commands.player;
 
+import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
-import org.json.JSONObject;
 
 public class PlayerEnterExitRoomCommand extends Command {
     private boolean enter;
@@ -16,9 +19,9 @@ public class PlayerEnterExitRoomCommand extends Command {
     @Override
     public JSONObject serialize() {
         JSONObject result = new JSONObject();
-        result.put("type", type);
-        result.put("enter", enter);
-        result.put("roomId", roomId);
+        result.put("type", new JSONNumber(type));
+        result.put("enter", JSONBoolean.getInstance(enter));
+        result.put("roomId", new JSONString(roomId));
         result.put("player", player);
 
         return result;
@@ -28,9 +31,9 @@ public class PlayerEnterExitRoomCommand extends Command {
     public void deserialize(JSONObject jsonObject) {
         reset();
 
-        enter = jsonObject.getBoolean("enter");
-        roomId = jsonObject.getString("roomId");
-        player = jsonObject.getJSONObject("player");
+        enter = jsonObject.get("enter").isBoolean().booleanValue();
+        roomId = jsonObject.get("roomId").isString().stringValue();
+        player = jsonObject.get("player").isObject();
     }
 
     @Override

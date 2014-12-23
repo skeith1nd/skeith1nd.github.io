@@ -2,7 +2,6 @@ package io.github.skeith1nd.core;
 
 import static playn.core.PlayN.*;
 
-import io.github.skeith1nd.core.game.CommandProcessor;
 import io.github.skeith1nd.core.keyboard.KeyboardListener;
 import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.player.Player;
@@ -19,9 +18,6 @@ public class SoH extends Game.Default {
 
     @Override
     public void init() {
-        // Start command processor
-        CommandProcessor.getInstance().start();
-
         // Init user
         Client.getInstance().connect();
 

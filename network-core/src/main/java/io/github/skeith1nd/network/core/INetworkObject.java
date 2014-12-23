@@ -1,6 +1,6 @@
 package io.github.skeith1nd.network.core;
 
-import org.json.JSONObject;
+import com.google.gwt.json.client.JSONObject;
 
 public interface INetworkObject {
     public JSONObject serialize();

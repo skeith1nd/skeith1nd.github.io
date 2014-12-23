@@ -1,7 +1,9 @@
 package io.github.skeith1nd.game;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 import java.util.HashMap;
 
@@ -15,12 +17,13 @@ public class ServerRoom {
     }
 
     public void fromJSON(String jsonString) {
-        JSONObject jsonObject = new JSONObject(jsonString);
-        JSONArray jsonArray = new JSONArray(jsonObject.getString("players"));
-        roomId = jsonObject.getString("roomId");
+        JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(jsonString));
+        JSONArray jsonArray = jsonObject.get("players").isArray();
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject obj = jsonArray.getJSONObject(i);
+        roomId = jsonObject.get("roomId").isString().stringValue();
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject obj = jsonArray.get(i).isObject();
             ServerPlayer serverPlayer = new ServerPlayer();
             serverPlayer.fromJSON(obj);
             players.put(serverPlayer.getUserId(), serverPlayer);
@@ -29,11 +32,11 @@ public class ServerRoom {
 
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("roomId", roomId);
+        jsonObject.put("roomId", new JSONString(roomId));
 
         JSONArray jsonArray = new JSONArray();
         for (ServerPlayer serverPlayer : players.values()) {
-            jsonArray.put(serverPlayer.toJSON());
+            jsonArray.set(jsonArray.size(), serverPlayer.toJSON());
         }
 
         jsonObject.put("players", jsonArray);
