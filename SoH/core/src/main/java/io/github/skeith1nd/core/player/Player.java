@@ -2,7 +2,9 @@ package io.github.skeith1nd.core.player;
 
 import static playn.core.PlayN.*;
 
+import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.world.ClientRoom;
+import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import org.json.JSONObject;
 import playn.core.AssetWatcher;
 import playn.core.Image;
@@ -15,16 +17,22 @@ public class Player {
 
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
-    private int x = 320;
-    private int y = 240;
-    private double currentSpriteIndex = 0.0;
-    private byte control = 0x08;
-    private boolean loaded = false;
-    private String type = "";
-    private String userId = "";
+    private int x, y;
+    private double currentSpriteIndex;
+    private byte control;
+    private boolean loaded, resting;
+    private String type, userId;
     private ClientRoom room;
 
-    private Player() {}
+    private Player() {
+        x = y = 0;
+        type = userId = "";
+        currentSpriteIndex = 0d;
+        control = 0x08;
+        loaded = false;
+        resting = true;
+    }
+
     public static Player getInstance() {
         if (instance == null) {
             instance = new Player();
@@ -48,7 +56,11 @@ public class Player {
         jsonObject.put("y", y);
         jsonObject.put("type", type);
         jsonObject.put("userId", userId);
-        jsonObject.put("room", room.toJSON());
+
+        if (room != null) {
+            jsonObject.put("room", room.toJSON());
+        }
+
         return jsonObject;
     }
 
@@ -129,28 +141,46 @@ public class Player {
         y -= 3;
         control = 0x01;
         incrementSpriteIndex();
+
+        // Send move command to server
+        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_UP);
     }
 
     public void moveLeft(){
         x -= 3;
         control = 0x02;
         incrementSpriteIndex();
+
+        // Send move command to server
+        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_LEFT);
     }
 
     public void moveDown(){
         y += 3;
         control = 0x04;
         incrementSpriteIndex();
+
+        // Send move command to server
+        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_DOWN);
     }
 
     public void moveRight(){
         x += 3;
         control = 0x08;
         incrementSpriteIndex();
+
+        // Send move command to server
+        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_RIGHT);
     }
 
     public void rest() {
         currentSpriteIndex = 0d;
+
+        // Send move command to server if the last move wasn't resting
+        if (!resting) {
+            Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.REST);
+            resting = true;
+        }
     }
 
     public Image getCurrentImage() {

@@ -25,9 +25,7 @@ public class PlayerEnterExitRoomCommand extends Command {
     }
 
     @Override
-    public void deserialize(String json) {
-        JSONObject jsonObject = new JSONObject(json);
-
+    public void deserialize(JSONObject jsonObject) {
         reset();
 
         enter = jsonObject.getBoolean("enter");

@@ -33,9 +33,7 @@ public class PlayerLoginCommand extends Command {
     }
 
     @Override
-    public void deserialize(String json) {
-        JSONObject jsonObject = new JSONObject(json);
-
+    public void deserialize(JSONObject jsonObject) {
         reset();
 
         userId = jsonObject.getString("userId");

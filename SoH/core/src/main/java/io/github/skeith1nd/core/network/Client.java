@@ -1,21 +1,26 @@
 package io.github.skeith1nd.core.network;
 
+import io.github.skeith1nd.core.game.CommandProcessor;
+import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.core.world.World;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
+import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import org.json.JSONObject;
 import playn.core.Net;
 
 import java.nio.ByteBuffer;
 
+import static playn.core.PlayN.json;
 import static playn.core.PlayN.net;
 
 public class Client {
     private static Client instance;
     private String websocketServerAddress = "ws://localhost:8887";
     private Net.WebSocket socket;
+    private boolean connected = false;
 
     private Client() {}
 
@@ -27,6 +32,7 @@ public class Client {
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
                 playerLoginCommand.setUserId("skeith1nd");
                 socket.send(playerLoginCommand.serialize().toString());
+                connected = true;
             }
 
             @Override
@@ -39,7 +45,7 @@ public class Client {
 
                         // Get the player login command
                         PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                        playerLoginCommand.deserialize(jsonObject.toString());
+                        playerLoginCommand.deserialize(jsonObject);
 
                         // Init the game with the user information returned from the login server
                         Player.getInstance().fromJSON(playerLoginCommand.getPlayer(), playerLoginCommand.getRoom());
@@ -50,7 +56,7 @@ public class Client {
 
                         // Get the player enter/exit command
                         PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
-                        playerEnterExitRoomCommand.deserialize(jsonObject.toString());
+                        playerEnterExitRoomCommand.deserialize(jsonObject);
 
                         // Get player id
                         String playerId = playerEnterExitRoomCommand.getPlayer().getString("userId");
@@ -63,6 +69,13 @@ public class Client {
                                 Player.getInstance().getRoom().removePlayer(playerId);
                             }
                         }
+                        break;
+                    case Commands.PLAYER_MOVE_COMMAND:
+                        System.out.println("player move command");
+
+                        // Get the move command
+                        PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand();
+                        playerMoveCommand.deserialize(jsonObject);
 
                         break;
                 }
@@ -76,6 +89,7 @@ public class Client {
             @Override
             public void onClose() {
                 System.out.println("closed");
+                connected = false;
             }
 
             @Override
@@ -90,5 +104,18 @@ public class Client {
             instance = new Client();
         }
         return instance;
+    }
+
+    public void send(JSONObject jsonObject) {
+        if (connected) {
+            socket.send(jsonObject.toString());
+        }
+    }
+
+    public void sendPlayerMoveCommand(int direction) {
+        if (connected) {
+            PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand(Player.getInstance().toJSON(), direction);
+            socket.send(playerMoveCommand.serialize().toString());
+        }
     }
 }

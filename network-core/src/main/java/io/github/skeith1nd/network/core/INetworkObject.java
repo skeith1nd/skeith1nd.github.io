@@ -4,6 +4,6 @@ import org.json.JSONObject;
 
 public interface INetworkObject {
     public JSONObject serialize();
-    public void deserialize(String json);
+    public void deserialize(JSONObject json);
     public void reset();
 }

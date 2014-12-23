@@ -1,11 +1,14 @@
 package io.github.skeith1nd.websocket;
 
 import io.github.skeith1nd.data.Database;
+import io.github.skeith1nd.game.CommandProcessor;
+import io.github.skeith1nd.game.Engine;
 import io.github.skeith1nd.game.ServerPlayer;
 import io.github.skeith1nd.game.ServerRoom;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
+import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
@@ -16,22 +19,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 
 public class Server extends WebSocketServer {
-    private HashMap<String, ServerRoom> rooms = new HashMap<String, ServerRoom>();
+    private static Server instance;
     private HashMap<String, ServerPlayer> connections = new HashMap<String, ServerPlayer>();
 
-    public Server( int port ) throws UnknownHostException {
+    private Server( int port ) {
         super( new InetSocketAddress( port ) );
 
-        ServerRoom serverRoom = new ServerRoom("1");
-        rooms.put(serverRoom.getRoomId(), serverRoom);
+        Engine.getInstance().init();
+        CommandProcessor.getInstance().start();
     }
 
-    public Server( InetSocketAddress address ) {
-        super( address );
+    public static Server getInstance() {
+        if (instance == null) instance = new Server(8887);
+        return instance;
     }
 
     @Override
@@ -47,13 +50,12 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onMessage( WebSocket conn, String message ) {
-        // User sends message
         JSONObject jsonObject = new JSONObject(message);
         switch (jsonObject.getInt("type")) {
             case Commands.PLAYER_LOGIN_COMMAND:
                 // Get the player login command
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                playerLoginCommand.deserialize(jsonObject.toString());
+                playerLoginCommand.deserialize(jsonObject);
 
                 // Access database to get player object to send to user
                 ServerPlayer serverPlayer = Database.getInstance().getPlayer(playerLoginCommand.getUserId());
@@ -61,7 +63,7 @@ public class Server extends WebSocketServer {
                 connections.put(serverPlayer.getUserId(), serverPlayer);
 
                 // Get the player room
-                ServerRoom serverRoom = rooms.get(serverPlayer.getRoomId());
+                ServerRoom serverRoom = Engine.getInstance().getRooms().get(serverPlayer.getRoomId());
                 serverRoom.getPlayers().put(serverPlayer.getUserId(), serverPlayer);
 
                 playerLoginCommand.setRoom(serverRoom.toJSON());
@@ -76,28 +78,35 @@ public class Server extends WebSocketServer {
                 playerEnterExitRoomCommand.setEnter(true);
                 playerEnterExitRoomCommand.setPlayer(serverPlayer.toJSON());
                 playerEnterExitRoomCommand.setRoomId(serverPlayer.getRoomId());
-                sendToAllInRoom(serverPlayer.getRoomId(), playerEnterExitRoomCommand.serialize().toString());
+                sendToAllInRoom(serverPlayer.getRoomId(), playerEnterExitRoomCommand.serialize());
+                break;
+            case Commands.PLAYER_MOVE_COMMAND:
+                // Get the player move command
+                PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand();
+                playerMoveCommand.deserialize(jsonObject);
 
+                // Add to processing queue
+                CommandProcessor.getInstance().getCommands().add(playerMoveCommand);
                 break;
         }
     }
 
     public static void main( String[] args ) throws InterruptedException , IOException {
         WebSocketImpl.DEBUG = true;
-        int port = 8887;
-        Server s = new Server( port );
-        s.start();
-        System.out.println( "Server started on port: " + s.getPort() );
+
+
+        Server.getInstance().start();
+        System.out.println("Server started on port: " + Server.getInstance().getPort());
 
         BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
         while ( true ) {
             String in = sysin.readLine();
             if( in.equals( "exit" ) ) {
-                s.stop();
+                Server.getInstance().stop();
                 break;
             } else if( in.equals( "restart" ) ) {
-                s.stop();
-                s.start();
+                Server.getInstance().stop();
+                Server.getInstance().start();
                 break;
             }
         }
@@ -110,11 +119,11 @@ public class Server extends WebSocketServer {
         }
     }
 
-    private void sendToAllInRoom(String roomId, String jsonMessage) {
-        ServerRoom room = rooms.get(roomId);
+    public void sendToAllInRoom(String roomId, JSONObject jsonMessage) {
+        ServerRoom room = Engine.getInstance().getRooms().get(roomId);
         HashMap<String, ServerPlayer> players = room.getPlayers();
         for (ServerPlayer player : players.values()) {
-            player.getWebSocket().send(jsonMessage);
+            player.getWebSocket().send(jsonMessage.toString());
         }
     }
 }
