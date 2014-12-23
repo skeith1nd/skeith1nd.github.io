@@ -1,0 +1,101 @@
+--- Rendering ---
+1) Render map tiles first. 
+2) Render all static & dynamic objects from top to bottom based on Y value.
+
+Static objects:
+Things such as trees and fences. These are usually things that the player can move behind and there is some sort of see-through parts to still show the player behind.
+
+Dynamic objects:
+Players and possible mobs
+
+
+
+--- Lighting/Shadows ---
+Look into normal maps for sprites
+
+
+
+--- Touch Interaction ---
+Touch: If user is holding a touch on the screen, then move player in that direction. An example:
++---------------------------------------+
+|                                       |
+|       x(upleft)  x(up)                |
+|                             x(upright)|
+|     x(left)                           |
+|                  P                    |
+|                                       |
+|   x(downleft)                x(down-  |
+|                 x(down)         right)|
++---------------------------------------+
+If the user is touches an object, interact with the object if the user is close enough.
+
+
+
+--- Mouse Interaction ---
+Right click on an object brings up interaction menu.
+Left click does default interaction with object.
+
+
+
+--- Keyboard Interaction ---
+WASD keys for movement.
+
+
+
+--- Collision Detection ---
+Objects will have a rectangular collision mask. When player sends a move command, check for collisions with every object on screen. Could use a quad tree for this later on.
+
+
+
+--- Networking ---
+http://www.gabrielgambetta.com/fpm1.html
+
+1) x Low frequency updates from server (every 10-100ms, keep a queue of commands to process from all users)
+2) x Client Prediction (Just update the player position locally, if receive any invalid commands from server, snap back)
+3) x Server Reconciliation (Keep list of move commands sent to server, every time server sends back list of acknowledged commands, discard them locally and if any are marked invalid, snap user back)
+4) Entity Interpolation (Client is in present but every other player is one update behind, and need to interpolate position from last update to current update of other player)
+5) Lag Compensation (if doing hack and slash)
+
+
+--- Player Interactions ---
+TODO - Maybe the same as mob interation?
+
+
+
+--- Mobs ---
+Aggressive mobs: When player collides with mob, initiate battle.
+Neutral mobs: When player collides with mob, throw up red hitbox around target mob and allow user to left click or hit key to initiate battle.
+
+
+
+--- Battle ---
+Turn based RPG fight/mage system or hack and slash if possible.
+
+
+
+--- Items/Inventory ---
+1) Bag system with draggable items that take up a certain amount of bag space squares
+2) Normal bag system like world of warcraft
+
+
+
+--- UI ---
+1) Image included in same directory as this file. ui.png
+
+
+
+--- Todo List ---
+1) Graphics loader/loading at beginning
+2) Zoomed in view of character on each map, like pokemon
+3) Load in map data file from tiled program to paint tiles and set some as blocked
+4) Collision detection
+5) Networking movement with client side prediction and reconciliation
+
+
+
+--- Notes ---
+C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target
+
+mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\out\artifacts\network_core_jar2\network-core.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+
+mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar

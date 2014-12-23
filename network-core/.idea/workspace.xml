@@ -117,8 +117,8 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="74" />
-    <option name="y" value="202" />
+    <option name="x" value="106" />
+    <option name="y" value="191" />
     <option name="width" value="1285" />
     <option name="height" value="876" />
   </component>
@@ -572,7 +572,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="74" y="202" width="1285" height="876" extended-state="0" />
+    <frame x="106" y="191" width="1285" height="876" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
