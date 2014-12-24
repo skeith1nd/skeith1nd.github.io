@@ -1,9 +1,9 @@
 package io.github.skeith1nd.core.world;
 
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
+import static playn.core.PlayN.*;
+
 import io.github.skeith1nd.core.player.ClientPlayer;
+import playn.core.Json;
 
 import java.util.HashMap;
 
@@ -15,12 +15,12 @@ public class ClientRoom {
         players = new HashMap<String, ClientPlayer>();
     }
 
-    public void fromJSON(JSONObject jsonObject) {
-        JSONArray jsonArray = jsonObject.get("players").isArray();
-        roomId = jsonObject.get("roomId").isString().stringValue();
+    public void fromJSON(Json.Object jsonObject) {
+        Json.Array jsonArray = jsonObject.getArray("players");
+        roomId = jsonObject.getString("roomId");
 
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject obj = jsonArray.get(i).isObject();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Json.Object obj = jsonArray.getObject(i);
             ClientPlayer clientPlayer = new ClientPlayer();
             clientPlayer.fromJSON(obj);
             clientPlayer.init();
@@ -28,20 +28,20 @@ public class ClientRoom {
         }
     }
 
-    public JSONObject toJSON() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("roomId", new JSONString(roomId));
+    public Json.Object toJSON() {
+        Json.Object jsonObject = json().createObject();
+        jsonObject.put("roomId", roomId);
 
-        JSONArray jsonArray = new JSONArray();
+        Json.Array jsonArray = json().createArray();
         for (ClientPlayer clientPlayer : players.values()) {
-            jsonArray.set(jsonArray.size(), clientPlayer.toJSON());
+            jsonArray.set(jsonArray.length(), clientPlayer.toJSON());
         }
 
         jsonObject.put("players", jsonArray);
         return jsonObject;
     }
 
-    public void addOrUpdatePlayer(JSONObject player) {
+    public void addOrUpdatePlayer(Json.Object player) {
         ClientPlayer clientPlayer = new ClientPlayer();
         clientPlayer.fromJSON(player);
         clientPlayer.init();

@@ -16,15 +16,15 @@
     <orderEntry type="module" module-name="soh-assets" />
     <orderEntry type="library" name="Maven: com.googlecode.playn:playn-java:1.9-alpha1" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-windows:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-linux:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-osx:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: net.java.jinput:jinput:2.0.5" level="project" />
     <orderEntry type="library" name="Maven: net.java.jutils:jutils:1.0.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-linux:2.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-windows:2.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-osx:2.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl_util:2.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-linux:2.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-windows:2.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-osx:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: jlayer:mp3spi:1.9.5" level="project" />
     <orderEntry type="library" name="Maven: jlayer:jlayer:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: jlayer:tritonus_share:1.0" level="project" />
@@ -34,4 +34,3 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>
-

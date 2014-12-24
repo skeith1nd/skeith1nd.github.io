@@ -1,10 +1,10 @@
 package io.github.skeith1nd.game;
 
-import com.google.gwt.json.client.JSONObject;
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import io.github.skeith1nd.websocket.Server;
+import playn.core.Json;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -58,8 +58,8 @@ public class CommandProcessor implements Runnable {
                         playerMoveCommand.setValidated(true);
 
                         // Send the move out to everyone else in the room
-                        JSONObject room = playerMoveCommand.getPlayer().get("room").isObject();
-                        Server.getInstance().sendToAllInRoom(room.get("roomId").isString().stringValue(), playerMoveCommand.serialize());
+                        Json.Object room = playerMoveCommand.getPlayer().getObject("room");
+                        Server.getInstance().sendToAllInRoom(room.getString("roomId"), playerMoveCommand.serialize());
                         break;
                 }
             }

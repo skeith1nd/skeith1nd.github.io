@@ -1,16 +1,15 @@
 package io.github.skeith1nd.network.core.commands.player;
 
-import com.google.gwt.json.client.JSONBoolean;
-import com.google.gwt.json.client.JSONNumber;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
+import static playn.core.PlayN.*;
+
 import io.github.skeith1nd.network.core.commands.Command;
 import io.github.skeith1nd.network.core.commands.Commands;
+import playn.core.Json;
 
 public class PlayerLoginCommand extends Command {
     private String userId;
     private boolean success;
-    private JSONObject player, room;
+    private Json.Object player, room;
 
     public PlayerLoginCommand() {
         reset();
@@ -18,17 +17,17 @@ public class PlayerLoginCommand extends Command {
 
     public PlayerLoginCommand(String userId) {
         this.success = false;
-        this.player = new JSONObject();
-        this.room = new JSONObject();
+        this.player = json().createObject();
+        this.room = json().createObject();
         this.userId = userId;
     }
 
     @Override
-    public JSONObject serialize() {
-        JSONObject result = new JSONObject();
-        result.put("userId", new JSONString(userId));
-        result.put("type", new JSONNumber(type));
-        result.put("success", JSONBoolean.getInstance(success));
+    public Json.Object serialize() {
+        Json.Object result = json().createObject();
+        result.put("userId", userId);
+        result.put("type", type);
+        result.put("success", success);
         result.put("player", player);
         result.put("room", room);
 
@@ -36,21 +35,21 @@ public class PlayerLoginCommand extends Command {
     }
 
     @Override
-    public void deserialize(JSONObject jsonObject) {
+    public void deserialize(Json.Object jsonObject) {
         reset();
 
-        userId = jsonObject.get("userId").isString().stringValue();
-        success = jsonObject.get("success").isBoolean().booleanValue();
-        player = jsonObject.get("player").isObject();
-        room = jsonObject.get("room").isObject();
+        userId = jsonObject.getString("userId");
+        success = jsonObject.getBoolean("success");
+        player = jsonObject.getObject("player");
+        room = jsonObject.getObject("room");
     }
 
     @Override
     public void reset() {
         userId = "";
         success = false;
-        player = new JSONObject();
-        room = new JSONObject();
+        player = json().createObject();
+        room = json().createObject();
         type = Commands.PLAYER_LOGIN_COMMAND;
     }
 
@@ -70,19 +69,19 @@ public class PlayerLoginCommand extends Command {
         this.success = success;
     }
 
-    public JSONObject getPlayer() {
+    public Json.Object getPlayer() {
         return player;
     }
 
-    public void setPlayer(JSONObject player) {
+    public void setPlayer(Json.Object player) {
         this.player = player;
     }
 
-    public JSONObject getRoom() {
+    public Json.Object getRoom() {
         return room;
     }
 
-    public void setRoom(JSONObject room) {
+    public void setRoom(Json.Object room) {
         this.room = room;
     }
 }

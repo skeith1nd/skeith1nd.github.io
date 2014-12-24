@@ -1,10 +1,8 @@
 package io.github.skeith1nd.data;
 
-import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.json.client.JSONNumber;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import io.github.skeith1nd.game.ServerPlayer;
+import playn.core.Json;
+import playn.core.PlayN;
 
 public class Database {
     private static Database instance;
@@ -37,16 +35,16 @@ public class Database {
     }
 
     public ServerPlayer getPlayer(String userId) {
-        JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(data));
-        JSONObject jsonUser = (JSONObject)jsonObject.get(userId);
+        Json.Object jsonObject = PlayN.json().parse(data);//new JSONObject(JsonUtils.safeEval(data));
+        Json.Object jsonUser = jsonObject.getObject(userId);
 
         ServerPlayer result = new ServerPlayer();
 
         result.setUserId(userId);
-        result.setType(((JSONString)jsonUser.get("type")).stringValue());
-        result.setX((int)((JSONNumber)jsonUser.get("x")).doubleValue());
-        result.setY((int)((JSONNumber)jsonUser.get("y")).doubleValue());
-        result.setRoomId(((JSONString)jsonUser.get("roomId")).stringValue());
+        result.setType(jsonUser.getString("type"));
+        result.setX(jsonUser.getInt("x"));
+        result.setX(jsonUser.getInt("x"));
+        result.setRoomId(jsonUser.getString("roomId"));
 
         return result;
     }

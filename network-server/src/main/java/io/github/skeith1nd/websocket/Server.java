@@ -1,7 +1,7 @@
 package io.github.skeith1nd.websocket;
 
-import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.json.client.JSONObject;
+import static playn.core.PlayN.*;
+
 import io.github.skeith1nd.data.Database;
 import io.github.skeith1nd.game.CommandProcessor;
 import io.github.skeith1nd.game.Engine;
@@ -15,6 +15,8 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import playn.core.Json;
+import playn.core.PlayN;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,8 +53,8 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onMessage( WebSocket conn, String message ) {
-        JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(message));
-        switch ((int)jsonObject.get("type").isNumber().doubleValue()) {
+        Json.Object jsonObject = json().parse(message);
+        switch (jsonObject.getInt("type")) {
             case Commands.PLAYER_LOGIN_COMMAND:
                 // Get the player login command
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
@@ -120,11 +122,11 @@ public class Server extends WebSocketServer {
         }
     }
 
-    public void sendToAllInRoom(String roomId, JSONObject jsonMessage) {
+    public void sendToAllInRoom(String roomId, Json.Object jsonMessage) {
         ServerRoom room = Engine.getInstance().getRooms().get(roomId);
         HashMap<String, ServerPlayer> players = room.getPlayers();
         for (ServerPlayer player : players.values()) {
-            player.getWebSocket().send(jsonMessage.toString());
+            player.getWebSocket().send(PlayN.json().newWriter().object(jsonMessage).write());
         }
     }
 }

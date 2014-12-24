@@ -1,7 +1,5 @@
 package io.github.skeith1nd.core.network;
 
-import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.json.client.JSONObject;
 import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.network.core.commands.Commands;
@@ -31,15 +29,15 @@ public class Client {
                 // Connected the websocket. Now attempt to "login" using User credentials
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
                 playerLoginCommand.setUserId("danielpuder");
-                socket.send(playerLoginCommand.serialize().toString());
+                socket.send(json().newWriter().object(playerLoginCommand.serialize()).write());
                 connected = true;
             }
 
             @Override
             public void onTextMessage(String message) {
                 // Handle message from server
-                JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(message));
-                switch ((int)jsonObject.get("type").isNumber().doubleValue()) {
+                Json.Object jsonObject = json().parse(message);
+                switch (jsonObject.getInt("type")) {
                     case Commands.PLAYER_LOGIN_COMMAND:
                         System.out.println("Player login command");
 
@@ -59,7 +57,7 @@ public class Client {
                         playerEnterExitRoomCommand.deserialize(jsonObject);
 
                         // Get player id
-                        String playerId = playerEnterExitRoomCommand.getPlayer().get("userId").isString().stringValue();
+                        String playerId = playerEnterExitRoomCommand.getPlayer().getString("userId");
 
                         // If another player entered/exit the room, update player's room object
                         if (!playerId.equals(Player.getInstance().getUserId())) {
@@ -78,16 +76,16 @@ public class Client {
                         playerMoveCommand.deserialize(jsonObject);
 
                         // Process
-                        if (playerMoveCommand.getPlayer().get("userId").isString().stringValue().equals(Player.getInstance().getUserId())) {
+                        if (playerMoveCommand.getPlayer().getString("userId").equals(Player.getInstance().getUserId())) {
                             // If invalid, snap player back to last valid position
                             if (!playerMoveCommand.isValidated()) {
-                                Player.getInstance().setX((int)playerMoveCommand.getPlayer().get("x").isNumber().doubleValue());
-                                Player.getInstance().setY((int)playerMoveCommand.getPlayer().get("y").isNumber().doubleValue());
+                                Player.getInstance().setX(playerMoveCommand.getPlayer().getInt("x"));
+                                Player.getInstance().setY(playerMoveCommand.getPlayer().getInt("y"));
                             }
                         } else {
                             // If valid, send move command to client player
                             if (playerMoveCommand.isValidated()) {
-                                String userId = playerMoveCommand.getPlayer().get("userId").isString().stringValue();
+                                String userId = playerMoveCommand.getPlayer().getString("userId");
                                 ClientPlayer clientPlayer = Player.getInstance().getRoom().getPlayers().get(userId);
 
                                 switch (playerMoveCommand.getDirection()) {
@@ -136,16 +134,16 @@ public class Client {
         return instance;
     }
 
-    public void send(JSONObject jsonObject) {
+    public void send(Json.Object jsonObject) {
         if (connected) {
-            socket.send(jsonObject.toString());
+            socket.send(json().newWriter().object(jsonObject).write());
         }
     }
 
     public void sendPlayerMoveCommand(int direction) {
         if (connected) {
             PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand(Player.getInstance().toJSON(), direction);
-            socket.send(playerMoveCommand.serialize().toString());
+            socket.send(json().newWriter().object(playerMoveCommand.serialize()).write());
         }
     }
 }

@@ -1,9 +1,7 @@
 package io.github.skeith1nd.game;
 
-import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
+import playn.core.Json;
+import playn.core.PlayN;
 
 import java.util.HashMap;
 
@@ -17,26 +15,26 @@ public class ServerRoom {
     }
 
     public void fromJSON(String jsonString) {
-        JSONObject jsonObject = new JSONObject(JsonUtils.safeEval(jsonString));
-        JSONArray jsonArray = jsonObject.get("players").isArray();
+        Json.Object jsonObject = PlayN.json().parse(jsonString);
+        Json.Array jsonArray = jsonObject.getArray("players");
 
-        roomId = jsonObject.get("roomId").isString().stringValue();
+        roomId = jsonObject.getString("roomId");
 
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject obj = jsonArray.get(i).isObject();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Json.Object obj = jsonArray.getObject(i);
             ServerPlayer serverPlayer = new ServerPlayer();
             serverPlayer.fromJSON(obj);
             players.put(serverPlayer.getUserId(), serverPlayer);
         }
     }
 
-    public JSONObject toJSON() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("roomId", new JSONString(roomId));
+    public Json.Object toJSON() {
+        Json.Object jsonObject = PlayN.json().createObject();
+        jsonObject.put("roomId", roomId);
 
-        JSONArray jsonArray = new JSONArray();
+        Json.Array jsonArray = PlayN.json().createArray();
         for (ServerPlayer serverPlayer : players.values()) {
-            jsonArray.set(jsonArray.size(), serverPlayer.toJSON());
+            jsonArray.set(jsonArray.length(), serverPlayer.toJSON());
         }
 
         jsonObject.put("players", jsonArray);
