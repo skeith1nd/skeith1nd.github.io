@@ -1,15 +1,14 @@
 package io.github.skeith1nd.game;
 
 import org.java_websocket.WebSocket;
-import playn.core.Json;
-import playn.core.PlayN;
+import org.json.JSONObject;
 
 public class ServerPlayer {
     private int x, y;
     private String type, roomId, userId;
     private WebSocket webSocket;
 
-    public void fromJSON(Json.Object jsonObject) {
+    public void fromJSON(JSONObject jsonObject) {
         x = jsonObject.getInt("x");
         y = jsonObject.getInt("y");
         type = jsonObject.getString("type");
@@ -17,8 +16,8 @@ public class ServerPlayer {
         userId = jsonObject.getString("userId");
     }
 
-    public Json.Object toJSON() {
-        Json.Object jsonObject = PlayN.json().createObject();
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("x", x);
         jsonObject.put("y", y);
         jsonObject.put("type", type);

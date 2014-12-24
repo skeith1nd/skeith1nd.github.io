@@ -1,8 +1,7 @@
 <module rename-to='soh'>
     <inherits name='playn.PlayN'/>
     <inherits name='SoHAssets'/>
-    <inherits name='io.github.skeith1nd.Network'/>
-    <inherits name="com.google.gwt.json.JSON" />
+    <inherits name='io.github.skeith1nd.network.Core'/>
 
     <source path='core'/>
     <source path='html'/>

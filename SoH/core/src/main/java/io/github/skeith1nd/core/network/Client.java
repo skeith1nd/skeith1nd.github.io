@@ -2,12 +2,14 @@ package io.github.skeith1nd.core.network;
 
 import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
+import io.github.skeith1nd.core.util.JSONUtil;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import playn.core.Json;
 import playn.core.Net;
+import playn.core.PlayN;
 
 import java.nio.ByteBuffer;
 
@@ -28,8 +30,8 @@ public class Client {
             public void onOpen() {
                 // Connected the websocket. Now attempt to "login" using User credentials
                 PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                playerLoginCommand.setUserId("danielpuder");
-                socket.send(json().newWriter().object(playerLoginCommand.serialize()).write());
+                playerLoginCommand.setUserId("skeith1nd");
+                socket.send(JSONUtil.serialize(playerLoginCommand));
                 connected = true;
             }
 
@@ -42,27 +44,25 @@ public class Client {
                         System.out.println("Player login command");
 
                         // Get the player login command
-                        PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                        playerLoginCommand.deserialize(jsonObject);
+                        PlayerLoginCommand playerLoginCommand = (PlayerLoginCommand)JSONUtil.deserialize(Commands.PLAYER_LOGIN_COMMAND, jsonObject);
 
                         // Init the game with the user information returned from the login server
-                        Player.getInstance().fromJSON(playerLoginCommand.getPlayer(), playerLoginCommand.getRoom());
+                        Player.getInstance().fromJSON(PlayN.json().parse(playerLoginCommand.getPlayerJson()), PlayN.json().parse(playerLoginCommand.getRoomJson()));
                         Player.getInstance().init();
                         break;
                     case Commands.PLAYER_ENTER_EXIT_ROOM_COMMAND:
                         System.out.println("player enter/exit room");
 
                         // Get the player enter/exit command
-                        PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
-                        playerEnterExitRoomCommand.deserialize(jsonObject);
+                        PlayerEnterExitRoomCommand playerEnterExitRoomCommand = (PlayerEnterExitRoomCommand)JSONUtil.deserialize(Commands.PLAYER_ENTER_EXIT_ROOM_COMMAND, jsonObject);
 
                         // Get player id
-                        String playerId = playerEnterExitRoomCommand.getPlayer().getString("userId");
+                        String playerId = PlayN.json().parse(playerEnterExitRoomCommand.getPlayerJson()).getString("userId");
 
                         // If another player entered/exit the room, update player's room object
                         if (!playerId.equals(Player.getInstance().getUserId())) {
                             if (playerEnterExitRoomCommand.isEnter()) {
-                                Player.getInstance().getRoom().addOrUpdatePlayer(playerEnterExitRoomCommand.getPlayer());
+                                Player.getInstance().getRoom().addOrUpdatePlayer(PlayN.json().parse(playerEnterExitRoomCommand.getPlayerJson()));
                             } else {
                                 Player.getInstance().getRoom().removePlayer(playerId);
                             }
@@ -72,20 +72,20 @@ public class Client {
                         System.out.println("player move command");
 
                         // Get the move command
-                        PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand();
-                        playerMoveCommand.deserialize(jsonObject);
+                        PlayerMoveCommand playerMoveCommand = (PlayerMoveCommand)JSONUtil.deserialize(Commands.PLAYER_MOVE_COMMAND, jsonObject);
+                        Json.Object playerJsonObject = PlayN.json().parse(playerMoveCommand.getPlayerJson());
 
                         // Process
-                        if (playerMoveCommand.getPlayer().getString("userId").equals(Player.getInstance().getUserId())) {
+                        if (playerJsonObject.getString("userId").equals(Player.getInstance().getUserId())) {
                             // If invalid, snap player back to last valid position
                             if (!playerMoveCommand.isValidated()) {
-                                Player.getInstance().setX(playerMoveCommand.getPlayer().getInt("x"));
-                                Player.getInstance().setY(playerMoveCommand.getPlayer().getInt("y"));
+                                Player.getInstance().setX(playerJsonObject.getInt("x"));
+                                Player.getInstance().setY(playerJsonObject.getInt("y"));
                             }
                         } else {
                             // If valid, send move command to client player
                             if (playerMoveCommand.isValidated()) {
-                                String userId = playerMoveCommand.getPlayer().getString("userId");
+                                String userId = playerJsonObject.getString("userId");
                                 ClientPlayer clientPlayer = Player.getInstance().getRoom().getPlayers().get(userId);
 
                                 switch (playerMoveCommand.getDirection()) {
@@ -101,10 +101,12 @@ public class Client {
                                     case PlayerMoveCommand.MOVE_RIGHT:
                                         clientPlayer.moveRight();
                                         break;
+                                    case PlayerMoveCommand.REST:
+                                        clientPlayer.rest();
+                                        break;
                                 }
                             }
                         }
-
                         break;
                 }
             }
@@ -142,8 +144,10 @@ public class Client {
 
     public void sendPlayerMoveCommand(int direction) {
         if (connected) {
-            PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand(Player.getInstance().toJSON(), direction);
-            socket.send(json().newWriter().object(playerMoveCommand.serialize()).write());
+            PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand();
+            playerMoveCommand.setDirection(direction);
+            playerMoveCommand.setPlayerJson(JSONUtil.serialize(Player.getInstance()));
+            socket.send(JSONUtil.serialize(playerMoveCommand));
         }
     }
 }

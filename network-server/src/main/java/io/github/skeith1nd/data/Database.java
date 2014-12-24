@@ -1,8 +1,7 @@
 package io.github.skeith1nd.data;
 
 import io.github.skeith1nd.game.ServerPlayer;
-import playn.core.Json;
-import playn.core.PlayN;
+import org.json.JSONObject;
 
 public class Database {
     private static Database instance;
@@ -35,15 +34,15 @@ public class Database {
     }
 
     public ServerPlayer getPlayer(String userId) {
-        Json.Object jsonObject = PlayN.json().parse(data);//new JSONObject(JsonUtils.safeEval(data));
-        Json.Object jsonUser = jsonObject.getObject(userId);
+        JSONObject jsonObject = new JSONObject(data);
+        JSONObject jsonUser = jsonObject.getJSONObject(userId);
 
         ServerPlayer result = new ServerPlayer();
 
         result.setUserId(userId);
         result.setType(jsonUser.getString("type"));
         result.setX(jsonUser.getInt("x"));
-        result.setX(jsonUser.getInt("x"));
+        result.setY(jsonUser.getInt("y"));
         result.setRoomId(jsonUser.getString("roomId"));
 
         return result;

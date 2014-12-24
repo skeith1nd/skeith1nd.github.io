@@ -58,7 +58,7 @@ public class Player {
         jsonObject.put("userId", userId);
 
         if (room != null) {
-            jsonObject.put("room", room.toJSON());
+            jsonObject.put("roomId", room.getRoomId());
         }
 
         return jsonObject;

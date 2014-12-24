@@ -1,7 +1,8 @@
 package io.github.skeith1nd.game;
 
-import playn.core.Json;
-import playn.core.PlayN;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONString;
 
 import java.util.HashMap;
 
@@ -15,26 +16,26 @@ public class ServerRoom {
     }
 
     public void fromJSON(String jsonString) {
-        Json.Object jsonObject = PlayN.json().parse(jsonString);
-        Json.Array jsonArray = jsonObject.getArray("players");
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray jsonArray = jsonObject.getJSONArray("players");
 
         roomId = jsonObject.getString("roomId");
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            Json.Object obj = jsonArray.getObject(i);
+            JSONObject obj = jsonArray.getJSONObject(i);
             ServerPlayer serverPlayer = new ServerPlayer();
             serverPlayer.fromJSON(obj);
             players.put(serverPlayer.getUserId(), serverPlayer);
         }
     }
 
-    public Json.Object toJSON() {
-        Json.Object jsonObject = PlayN.json().createObject();
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("roomId", roomId);
 
-        Json.Array jsonArray = PlayN.json().createArray();
+        JSONArray jsonArray = new JSONArray();
         for (ServerPlayer serverPlayer : players.values()) {
-            jsonArray.set(jsonArray.length(), serverPlayer.toJSON());
+            jsonArray.put(serverPlayer.toJSON());
         }
 
         jsonObject.put("players", jsonArray);

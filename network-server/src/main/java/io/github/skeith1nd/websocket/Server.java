@@ -1,7 +1,5 @@
 package io.github.skeith1nd.websocket;
 
-import static playn.core.PlayN.*;
-
 import io.github.skeith1nd.data.Database;
 import io.github.skeith1nd.game.CommandProcessor;
 import io.github.skeith1nd.game.Engine;
@@ -11,12 +9,12 @@ import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
+import io.github.skeith1nd.util.JSONUtil;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import playn.core.Json;
-import playn.core.PlayN;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +25,8 @@ import java.util.HashMap;
 public class Server extends WebSocketServer {
     private static Server instance;
     private HashMap<String, ServerPlayer> connections = new HashMap<String, ServerPlayer>();
+
+    private int temp = 0;
 
     private Server( int port ) {
         super( new InetSocketAddress( port ) );
@@ -53,14 +53,16 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onMessage( WebSocket conn, String message ) {
-        Json.Object jsonObject = json().parse(message);
+        JSONObject jsonObject = new JSONObject(message);
         switch (jsonObject.getInt("type")) {
             case Commands.PLAYER_LOGIN_COMMAND:
                 // Get the player login command
-                PlayerLoginCommand playerLoginCommand = new PlayerLoginCommand();
-                playerLoginCommand.deserialize(jsonObject);
+                PlayerLoginCommand playerLoginCommand = (PlayerLoginCommand)JSONUtil.deserialize(Commands.PLAYER_LOGIN_COMMAND, jsonObject);
 
                 // Access database to get player object to send to user
+                if (temp == 0) { playerLoginCommand.setUserId("skeith1nd"); }
+                if (temp == 1) { playerLoginCommand.setUserId("danielpuder"); }
+                temp++;
                 ServerPlayer serverPlayer = Database.getInstance().getPlayer(playerLoginCommand.getUserId());
                 serverPlayer.setWebSocket(conn);
                 connections.put(serverPlayer.getUserId(), serverPlayer);
@@ -69,24 +71,23 @@ public class Server extends WebSocketServer {
                 ServerRoom serverRoom = Engine.getInstance().getRooms().get(serverPlayer.getRoomId());
                 serverRoom.getPlayers().put(serverPlayer.getUserId(), serverPlayer);
 
-                playerLoginCommand.setRoom(serverRoom.toJSON());
-                playerLoginCommand.setPlayer(serverPlayer.toJSON());
+                playerLoginCommand.setRoomJson(serverRoom.toJSON().toString());
+                playerLoginCommand.setPlayerJson(serverPlayer.toJSON().toString());
                 playerLoginCommand.setSuccess(true);
 
                 // Send login response
-                conn.send(playerLoginCommand.serialize().toString());
+                conn.send(JSONUtil.serialize(playerLoginCommand));
 
                 // Send player enter room to all players in room
                 PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
                 playerEnterExitRoomCommand.setEnter(true);
-                playerEnterExitRoomCommand.setPlayer(serverPlayer.toJSON());
+                playerEnterExitRoomCommand.setPlayerJson(serverPlayer.toJSON().toString());
                 playerEnterExitRoomCommand.setRoomId(serverPlayer.getRoomId());
-                sendToAllInRoom(serverPlayer.getRoomId(), playerEnterExitRoomCommand.serialize());
+                sendToAllInRoom(serverPlayer.getRoomId(), JSONUtil.serialize(playerEnterExitRoomCommand));
                 break;
             case Commands.PLAYER_MOVE_COMMAND:
                 // Get the player move command
-                PlayerMoveCommand playerMoveCommand = new PlayerMoveCommand();
-                playerMoveCommand.deserialize(jsonObject);
+                PlayerMoveCommand playerMoveCommand = (PlayerMoveCommand)JSONUtil.deserialize(Commands.PLAYER_MOVE_COMMAND, jsonObject);
 
                 // Add to processing queue
                 CommandProcessor.getInstance().getCommands().add(playerMoveCommand);
@@ -122,11 +123,11 @@ public class Server extends WebSocketServer {
         }
     }
 
-    public void sendToAllInRoom(String roomId, Json.Object jsonMessage) {
+    public void sendToAllInRoom(String roomId, String jsonString) {
         ServerRoom room = Engine.getInstance().getRooms().get(roomId);
         HashMap<String, ServerPlayer> players = room.getPlayers();
         for (ServerPlayer player : players.values()) {
-            player.getWebSocket().send(PlayN.json().newWriter().object(jsonMessage).write());
+            player.getWebSocket().send(jsonString.toString());
         }
     }
 }
