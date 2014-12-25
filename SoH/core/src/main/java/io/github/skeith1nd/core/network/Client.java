@@ -18,7 +18,7 @@ import static playn.core.PlayN.net;
 
 public class Client {
     private static Client instance;
-    private String websocketServerAddress = "ws://localhost:8887";
+    private String websocketServerAddress = "ws://192.168.0.15:8887";
     private Net.WebSocket socket;
     private boolean connected = false;
 

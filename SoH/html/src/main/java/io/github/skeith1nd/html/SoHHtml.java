@@ -10,9 +10,7 @@ public class SoHHtml extends HtmlGame {
 
   @Override
   public void start() {
-    HtmlPlatform.Config config = new HtmlPlatform.Config();
-    // use config to customize the HTML platform, if needed
-    HtmlPlatform platform = HtmlPlatform.register(config);
+    HtmlPlatform platform = HtmlPlatform.register();
     platform.assets().setPathPrefix("soh/");
     PlayN.run(new SoH());
   }

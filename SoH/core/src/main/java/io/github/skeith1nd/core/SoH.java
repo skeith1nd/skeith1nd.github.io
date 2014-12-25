@@ -65,6 +65,8 @@ public class SoH extends Game.Default {
 
     @Override
     public void paint(float alpha) {
-        // the background automatically paints itself, so no need to do anything here!
+        float sx = graphics().width() / (float)640;
+        float sy = graphics().height() / (float)480;
+        graphics().rootLayer().setScale(Math.min(sx, sy));
     }
 }

@@ -89,7 +89,8 @@ Turn based RPG fight/mage system or hack and slash if possible.
 2) Zoomed in view of character on each map, like pokemon
 3) Load in map data file from tiled program to paint tiles and set some as blocked
 4) Collision detection
-5) Networking movement with client side prediction and reconciliation
+5) Rest position for other clients
+6) Double check x,y positions for client players after the moveUp/moveDown etc commands so that the game state doesn't get out of sync with the server
 
 
 
@@ -98,4 +99,4 @@ C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target
 
 mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\out\artifacts\network_core_jar2\network-core.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
 
-mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+mvn install:install-file -Dfile=C:\Users\Steve\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
