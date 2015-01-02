@@ -1,20 +1,13 @@
 package io.github.skeith1nd.core.world;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import io.github.skeith1nd.network.core.xml.XmlDoc;
+import io.github.skeith1nd.network.core.xml.XmlParser;
+import io.github.skeith1nd.network.core.xml.XmlTag;
 import playn.core.Image;
 import playn.core.ImmediateLayer;
 import playn.core.PlayN;
 import playn.core.util.Callback;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,10 +28,10 @@ public class Room {
     }
 
     public void init() {
-        PlayN.assets().getBytes("images/rooms/room" + roomId + "/room" + roomId + ".tmx",
-                new Callback<byte[]>() {
+        PlayN.assets().getText("images/rooms/room" + roomId + "/room" + roomId + ".tmx",
+                new Callback<String>() {
                     @Override
-                    public void onSuccess(byte[] result) {
+                    public void onSuccess(String result) {
                         fillTiles(result);
                     }
 
@@ -46,71 +39,61 @@ public class Room {
                     public void onFailure(Throwable cause) {
 
                     }
-                });
+                }
+        );
     }
 
-    private void fillTiles(byte[] buffer) {
+    private void fillTiles(String buffer) {
         try {
             // Load xml
             int imageWidth, imageHeight, tileWidth, tileHeight, firstGid, lastGid, mapWidth, mapHeight;
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new ByteArrayInputStream(buffer));
+            XmlDoc xmlDoc = XmlParser.parseXml(buffer);
 
-            XPathFactory xpathFactory = XPathFactory.newInstance();
-            XPathExpression xpathExp = xpathFactory.newXPath().compile(
-                    "//text()[normalize-space(.) = '']");
-            NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(document, XPathConstants.NODESET);
+            // Map Node
+            XmlTag mapNode = xmlDoc.root;
+            mapWidth = Integer.parseInt(mapNode.attributes.get("width"));
+            mapHeight = Integer.parseInt(mapNode.attributes.get("height"));
+            tileWidth = Integer.parseInt(mapNode.attributes.get("tilewidth"));
+            tileHeight = Integer.parseInt(mapNode.attributes.get("tileheight"));
 
-            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
-                Node emptyTextNode = emptyTextNodes.item(i);
-                emptyTextNode.getParentNode().removeChild(emptyTextNode);
-            }
+            // TileSet Node
+            XmlTag tileSetNode = mapNode.children.get(0);
+            firstGid = Integer.parseInt(tileSetNode.attributes.get("firstgid"));
 
-            // Map node
-            Node mapNode = document.getDocumentElement();
-            mapWidth = Integer.parseInt(mapNode.getAttributes().getNamedItem("width").getNodeValue());
-            mapHeight = Integer.parseInt(mapNode.getAttributes().getNamedItem("height").getNodeValue());
-            tileWidth = Integer.parseInt(mapNode.getAttributes().getNamedItem("tilewidth").getNodeValue());
-            tileHeight = Integer.parseInt(mapNode.getAttributes().getNamedItem("tileheight").getNodeValue());
-
-            // Tileset node
-            Node tilesetNode = mapNode.getChildNodes().item(0);
-            firstGid = Integer.parseInt(tilesetNode.getAttributes().getNamedItem("firstgid").getNodeValue());
-
-            // Image node
-            Node imageNode = tilesetNode.getChildNodes().item(0);
-            imageWidth = Integer.parseInt(imageNode.getAttributes().getNamedItem("width").getNodeValue());
-            imageHeight = Integer.parseInt(imageNode.getAttributes().getNamedItem("height").getNodeValue());
+            // Image Node
+            XmlTag imageNode = tileSetNode.children.get(0);
+            imageWidth = Integer.parseInt(imageNode.attributes.get("width"));
+            imageHeight = Integer.parseInt(imageNode.attributes.get("height"));
 
             int tilesPerRow = imageWidth / tileWidth;
 
-            // background layer node
-            Node backgroundLayerData = mapNode.getChildNodes().item(1).getChildNodes().item(0);
+            // Background Layer Node
+            XmlTag backgroundLayerData = mapNode.children.get(1).children.get(0);
             processLayerData(backgroundLayerData, World.getInstance().getBackground(), firstGid, tilesPerRow, tileWidth, tileHeight, mapWidth);
 
-            // foreground layer node
-            Node foregroundLayerData = mapNode.getChildNodes().item(2).getChildNodes().item(0);
+            // Foreground Layer Node
+            XmlTag foregroundLayerData = mapNode.children.get(2).children.get(0);
             processLayerData(foregroundLayerData, World.getInstance().getForeground(), firstGid, tilesPerRow, tileWidth, tileHeight, mapWidth);
 
-            // top layer node
-            Node topLayerData = mapNode.getChildNodes().item(3).getChildNodes().item(0);
+            // Top Layer Node
+            XmlTag topLayerData = mapNode.children.get(3).children.get(0);
             processLayerData(topLayerData, World.getInstance().getTop(), firstGid, tilesPerRow, tileWidth, tileHeight, mapWidth);
 
             // Objects/Collision node
-            Node collisionLayerData = mapNode.getChildNodes().item(4);
+            XmlTag collisionLayerData = mapNode.children.get(4);
             processCollisionData(collisionLayerData, tilesPerRow, tileWidth, tileHeight);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void processLayerData(Node layerData, ImmediateLayer layer, int firstGid, int tilesPerRow, int tileWidth, int tileHeight, int mapWidth) {
+    private void processLayerData(XmlTag layerData, ImmediateLayer layer, int firstGid, int tilesPerRow, int tileWidth, int tileHeight, int mapWidth) {
         int drawX = 0, drawY = 0;
 
-        for (int i = 0; i < layerData.getChildNodes().getLength(); i++) {
-            int tileGid = Integer.parseInt(layerData.getChildNodes().item(i).getAttributes().getNamedItem("gid").getNodeValue());
+        for (int i = 0; i < layerData.children.size(); i++) {
+            int tileGid = Integer.parseInt(layerData.children.get(i).attributes.get("gid"));
 
             if (tileGid != 0) {
                 int tileRow = (tileGid - firstGid) / tilesPerRow;
@@ -135,22 +118,21 @@ public class Room {
         }
     }
 
-    private void processCollisionData(Node layerData, int tilesPerRow, int tileWidth, int tileHeight) {
-        for (int i = 0; i < layerData.getChildNodes().getLength(); i++) {
-            Node object = layerData.getChildNodes().item(i);
-            int x = Integer.parseInt(object.getAttributes().getNamedItem("x").getNodeValue());
-            int y = Integer.parseInt(object.getAttributes().getNamedItem("y").getNodeValue());
-            int width = Integer.parseInt(object.getAttributes().getNamedItem("width").getNodeValue());
-            int height = Integer.parseInt(object.getAttributes().getNamedItem("height").getNodeValue());
+    private void processCollisionData(XmlTag layerData, int tilesPerRow, int tileWidth, int tileHeight) {
+        for (int i = 0; i < layerData.children.size(); i++) {
+            XmlTag object = layerData.children.get(i);
+            int x = Integer.parseInt(object.attributes.get("x"));
+            int y = Integer.parseInt(object.attributes.get("y"));
+            int width = Integer.parseInt(object.attributes.get("width"));
+            int height = Integer.parseInt(object.attributes.get("height"));
 
-            if (object.getChildNodes().getLength() > 0) {
-                Node properties = object.getChildNodes().item(0);
+            if (object.children.size() > 0) {
+                XmlTag properties = object.children.get(0);
                 HashMap<String, String> propertyValues = new HashMap<String, String>();
 
-                for (int j = 0; j < properties.getChildNodes().getLength(); j++) {
-                    Node property = properties.getChildNodes().item(j);
-                    propertyValues.put(property.getAttributes().getNamedItem("name").getNodeValue(),
-                            property.getAttributes().getNamedItem("value").getNodeValue());
+                for (int j = 0; j < properties.children.size(); j++) {
+                    XmlTag property = properties.children.get(j);
+                    propertyValues.put(property.attributes.get("name"), property.attributes.get("value"));
                 }
 
                 if (propertyValues.get("type") != null) {
