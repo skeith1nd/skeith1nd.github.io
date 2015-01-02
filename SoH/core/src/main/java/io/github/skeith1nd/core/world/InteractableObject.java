@@ -1,10 +1,7 @@
 package io.github.skeith1nd.core.world;
 
-import playn.core.Image;
-
 public class InteractableObject extends Renderable {
     private int tileGid, tilesWide, tilesTall;
-    private Image image;
 
     public void init(int tilesPerRow, int tileWidth, int tileHeight) {
         int tileRow = tileGid / tilesPerRow;
@@ -17,6 +14,19 @@ public class InteractableObject extends Renderable {
         height = tilesTall * tileHeight;
 
         image = World.getInstance().getTerrainTileSheet().subImage(imageX, imageY, width, height);
+
+        // Add to world
+        World.getInstance().getRoomObjects().add(this);
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void update(Object o) {
+
     }
 
     public int getTileGid() {
@@ -41,13 +51,5 @@ public class InteractableObject extends Renderable {
 
     public void setTilesTall(int tilesTall) {
         this.tilesTall = tilesTall;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
     }
 }

@@ -3,6 +3,7 @@ package io.github.skeith1nd.core.world;
 import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
+import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
 import playn.core.Image;
 import playn.core.ImmediateLayer;
 import playn.core.Surface;
@@ -10,7 +11,6 @@ import playn.core.Surface;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.TreeSet;
 
 import static playn.core.PlayN.graphics;
 
@@ -19,15 +19,15 @@ public class World {
     private HashMap<String, Room> rooms;
     private ImmediateLayer background, foreground, top;
     private Image terrainTileSheet;
-    private TreeSet<InteractableObject> roomObjects;
+    private UpdateableTreeSet<Renderable> roomObjects;
 
     private World() {
         rooms = new HashMap<String, Room>();
-        roomObjects = new TreeSet<InteractableObject>(new Comparator<InteractableObject>() {
+        roomObjects = new UpdateableTreeSet<Renderable>(new Comparator<Renderable>() {
             @Override
-            public int compare(InteractableObject o1, InteractableObject o2) {
-                if (o1.getY() < o2.getY()) return -1;
-                else if (o1.getY() == o2.getY()) return 0;
+            public int compare(Renderable o1, Renderable o2) {
+                if (o1 == o2) return 0;
+                if (o1.getY() <= o2.getY()) return -1;
                 else return 1;
             }
         });
@@ -73,6 +73,7 @@ public class World {
     }
 
     public void paintBackgroundLayer(Surface surface) {
+        // Generally the terrain
         if (Player.getInstance().getRoom() != null) {
             Room currentRoom = rooms.get(Player.getInstance().getRoom().getRoomId());
             ArrayList<Tile> tiles = currentRoom.getTiles().get(background);
@@ -83,41 +84,20 @@ public class World {
     }
 
     public void paintForegroundLayer(Surface surface) {
+        roomObjects.updateAll();
+
         if (Player.getInstance().getRoom() != null) {
+            // Generally objects that have no depth
             Room currentRoom = rooms.get(Player.getInstance().getRoom().getRoomId());
             ArrayList<Tile> tiles = currentRoom.getTiles().get(foreground);
             for (Tile tile : tiles) {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
             }
 
-            boolean drawnPlayer = false;
-            for (InteractableObject object : roomObjects) {
-                if (!drawnPlayer && Player.getInstance().getY() < object.getY()) {
-                    System.out.println("behind");
-                    // Draw player
-                    surface.drawImage(Player.getInstance().getCurrentImage(),
-                            Player.getInstance().getX() - Player.getInstance().getWidth() / 2,
-                            Player.getInstance().getY() - Player.getInstance().getHeight());
-                    drawnPlayer = true;
-                }
+            for (Renderable object : roomObjects) {
                 surface.drawImage(object.getImage(),
                         object.getX() - object.getWidth() / 2,
                         object.getY() - object.getHeight());
-            }
-
-            if (Player.getInstance().isLoaded()) {
-                // Draw other players in the room
-                for (ClientPlayer player : Player.getInstance().getRoom().getPlayers().values()) {
-                    if (!player.getUserId().equals(Player.getInstance().getUserId()) && player.isLoaded())
-                        surface.drawImage(player.getCurrentImage(), player.getX(), player.getY());
-                }
-
-                if (!drawnPlayer) {
-                    // Draw player
-                    surface.drawImage(Player.getInstance().getCurrentImage(),
-                            Player.getInstance().getX() - Player.getInstance().getWidth() / 2,
-                            Player.getInstance().getY() - Player.getInstance().getHeight());
-                }
             }
         }
     }
@@ -164,11 +144,11 @@ public class World {
         this.terrainTileSheet = terrainTileSheet;
     }
 
-    public TreeSet<InteractableObject> getRoomObjects() {
+    public UpdateableTreeSet<Renderable> getRoomObjects() {
         return roomObjects;
     }
 
-    public void setRoomObjects(TreeSet<InteractableObject> roomObjects) {
+    public void setRoomObjects(UpdateableTreeSet<Renderable> roomObjects) {
         this.roomObjects = roomObjects;
     }
 }

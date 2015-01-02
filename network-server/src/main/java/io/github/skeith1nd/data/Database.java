@@ -12,8 +12,8 @@ public class Database {
             "        \"name\" : \"steve\",\n" +
             "        \"level\" : 1,\n" +
             "        \"roomId\" : \"1\",\n" +
-            "        \"x\" : 200,\n" +
-            "        \"y\" : 200,\n" +
+            "        \"x\" : 5,\n" +
+            "        \"y\" : 5,\n" +
             "        \"type\" : \"man1\"\n" +
             "    },\n" +
             "    \"danielpuder\" : {\n" +

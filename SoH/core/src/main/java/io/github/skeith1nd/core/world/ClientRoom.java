@@ -41,15 +41,16 @@ public class ClientRoom {
         return jsonObject;
     }
 
-    public void addOrUpdatePlayer(Json.Object player) {
+    public ClientPlayer addOrUpdatePlayer(Json.Object player) {
         ClientPlayer clientPlayer = new ClientPlayer();
         clientPlayer.fromJSON(player);
         clientPlayer.init();
         players.put(clientPlayer.getUserId(), clientPlayer);
+        return clientPlayer;
     }
 
-    public void removePlayer(String userId) {
-        players.remove(userId);
+    public ClientPlayer removePlayer(String userId) {
+        return players.remove(userId);
     }
 
     public String getRoomId() {

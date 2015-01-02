@@ -148,8 +148,6 @@ public class Room {
                         interactableObject.setTilesTall(Integer.parseInt(dimensions[1]));
                         interactableObject.setTileGid(Integer.parseInt(propertyValues.get("tile")));
                         interactableObject.init(tilesPerRow, tileWidth, tileHeight);
-
-                        World.getInstance().getRoomObjects().add(interactableObject);
                     }
                 }
             }

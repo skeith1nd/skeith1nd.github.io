@@ -6,8 +6,8 @@ import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.world.ClientRoom;
 import io.github.skeith1nd.core.world.Renderable;
+import io.github.skeith1nd.core.world.World;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
-import playn.core.AssetWatcher;
 import playn.core.Image;
 import playn.core.Json;
 
@@ -21,7 +21,7 @@ public class Player extends Renderable {
     private HashMap<String, ArrayList<Image>> animations;
     private double currentSpriteIndex;
     private byte control;
-    private boolean loaded, resting;
+    private boolean resting;
     private String type, userId;
     private ClientRoom room;
 
@@ -33,7 +33,6 @@ public class Player extends Renderable {
         type = userId = "";
         currentSpriteIndex = 0d;
         control = 0x08;
-        loaded = false;
         resting = true;
     }
 
@@ -72,6 +71,9 @@ public class Player extends Renderable {
         spriteSheet = AssetManager.getInstance().getImages().get("images/characters/" + type + "/" + type + ".png");
         animations = new HashMap<String, ArrayList<Image>>();
         loadAnimations();
+
+        // Add to world
+        World.getInstance().getRoomObjects().add(this);
     }
 
     // TODO: load animation information from a data file
@@ -123,8 +125,6 @@ public class Player extends Renderable {
             ));
         }
         animations.put("walk_right", walkRight);
-
-        loaded = true;
     }
 
     public void moveUp(){
@@ -177,6 +177,10 @@ public class Player extends Renderable {
         }
     }
 
+    public Image getImage() {
+        return getCurrentImage();
+    }
+
     public Image getCurrentImage() {
         switch (control) {
             case 0x01:
@@ -198,6 +202,16 @@ public class Player extends Renderable {
         }
     }
 
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void update(Object o) {
+
+    }
+
     public Image getSpriteSheet() {
         return spriteSheet;
     }
@@ -214,36 +228,12 @@ public class Player extends Renderable {
         this.animations = animations;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public double getCurrentSpriteIndex() {
         return currentSpriteIndex;
     }
 
     public void setCurrentSpriteIndex(double currentSpriteIndex) {
         this.currentSpriteIndex = currentSpriteIndex;
-    }
-
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
     }
 
     public byte getControl() {

@@ -121,16 +121,30 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="XmlTag.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="XmlTag.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/xml/XmlTag.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.23809524" vertical-offset="0" max-vertical-offset="2144">
+            <state vertical-scroll-proportion="0.0" vertical-offset="256" max-vertical-offset="2144">
               <caret line="10" column="32" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#662#678#0" expanded="true" />
                 <element signature="e#826#834#0" expanded="true" />
                 <element signature="e#1554#1562#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UpdateableTreeSet.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/util/UpdateableTreeSet.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="2.5" vertical-offset="1392" max-vertical-offset="3312">
+              <caret line="206" column="19" selection-start-line="206" selection-start-column="19" selection-end-line="206" selection-end-column="19" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#4212#4223#0" expanded="true" />
+                <element signature="e#4287#4298#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -155,6 +169,7 @@
         <option value="$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/xml/XmlPrologue.java" />
         <option value="$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/xml/XmlTag.java" />
         <option value="$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/xml/XmlTag.java" />
+        <option value="$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/util/UpdateableTreeSet.java" />
       </list>
     </option>
   </component>
@@ -194,8 +209,8 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2018" />
-    <option name="y" value="59" />
+    <option name="x" value="112" />
+    <option name="y" value="148" />
     <option name="width" value="1358" />
     <option name="height" value="854" />
   </component>
@@ -352,6 +367,40 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="network-core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="network-core" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="network" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -588,7 +637,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2018" y="59" width="1358" height="854" extended-state="0" />
+    <frame x="112" y="148" width="1358" height="854" extended-state="1" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -644,14 +693,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/commands/player/PlayerMoveCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="640">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="256" max-vertical-offset="496">
@@ -1087,13 +1128,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/xml/XmlTag.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23809524" vertical-offset="0" max-vertical-offset="2144">
+        <state vertical-scroll-proportion="0.0" vertical-offset="256" max-vertical-offset="2144">
           <caret line="10" column="32" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#662#678#0" expanded="true" />
             <element signature="e#826#834#0" expanded="true" />
             <element signature="e#1554#1562#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/io/github/skeith1nd/network/core/util/UpdateableTreeSet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.5" vertical-offset="1392" max-vertical-offset="3312">
+          <caret line="206" column="19" selection-start-line="206" selection-start-column="19" selection-end-line="206" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4212#4223#0" expanded="true" />
+            <element signature="e#4287#4298#0" expanded="true" />
           </folding>
         </state>
       </provider>

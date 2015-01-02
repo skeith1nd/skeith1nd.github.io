@@ -1,14 +1,14 @@
 package io.github.skeith1nd.core.player;
 
+import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.world.Renderable;
-import playn.core.AssetWatcher;
+import io.github.skeith1nd.core.world.World;
 import playn.core.Image;
 import playn.core.Json;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static playn.core.PlayN.assets;
 import static playn.core.PlayN.json;
 
 public class ClientPlayer extends Renderable {
@@ -16,10 +16,15 @@ public class ClientPlayer extends Renderable {
     private HashMap<String, ArrayList<Image>> animations;
     private double currentSpriteIndex = 0.0;
     private byte control = 0x08;
-    private boolean loaded = false;
     private String type = "";
     private String userId = "";
     private String roomId = "";
+
+    public ClientPlayer() {
+        width = height = 64;
+        collisionWidth = 20;
+        collisionHeight = 10;
+    }
 
     public void fromJSON(Json.Object jsonObject) {
         x = jsonObject.getInt("x");
@@ -40,23 +45,13 @@ public class ClientPlayer extends Renderable {
     }
 
     public void init() {
-        spriteSheet = assets().getImage("images/characters/" + type + "/" + type + ".png");
+        spriteSheet = AssetManager.getInstance().getImages().get("images/characters/" + type + "/" + type + ".png");
         animations = new HashMap<String, ArrayList<Image>>();
+        loadAnimations();
 
-        // Load animations after assets loaded successfully TODO: move this into main asset watcher
-        AssetWatcher assetWatcher = new AssetWatcher(new AssetWatcher.Listener() {
-            @Override
-            public void done() {
-                loadAnimations();
-            }
-
-            @Override
-            public void error(Throwable e) {
-
-            }
-        });
-        assetWatcher.add(spriteSheet);
-        assetWatcher.start();
+        // Add to world if not the player
+        if (!userId.equals(Player.getInstance().getUserId()))
+            World.getInstance().getRoomObjects().add(this);
     }
 
     // TODO: load animation information from a data file
@@ -108,8 +103,6 @@ public class ClientPlayer extends Renderable {
             ));
         }
         animations.put("walk_right", walkRight);
-
-        loaded = true;
     }
 
     public void moveUp(){
@@ -145,6 +138,10 @@ public class ClientPlayer extends Renderable {
         currentSpriteIndex = 0d;
     }
 
+    public Image getImage() {
+        return getCurrentImage();
+    }
+
     public Image getCurrentImage() {
         switch (control) {
             case 0x01:
@@ -164,6 +161,16 @@ public class ClientPlayer extends Renderable {
         if (currentSpriteIndex >= 90) {
             currentSpriteIndex = 0.0;
         }
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void update(Object o) {
+
     }
 
     public Image getSpriteSheet() {
@@ -204,14 +211,6 @@ public class ClientPlayer extends Renderable {
 
     public void setCurrentSpriteIndex(double currentSpriteIndex) {
         this.currentSpriteIndex = currentSpriteIndex;
-    }
-
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
     }
 
     public byte getControl() {

@@ -1,7 +1,23 @@
 package io.github.skeith1nd.core.world;
 
-public abstract class Renderable {
+import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
+import playn.core.Image;
+
+public abstract class Renderable implements UpdateableTreeSet.Updateable{
     protected int x, y, width, height, collisionWidth, collisionHeight;
+    protected Image image;
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void destroy() {
+        World.getInstance().getRoomObjects().remove(this);
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
 
     public int getX() {
         return x;

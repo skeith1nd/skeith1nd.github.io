@@ -63,15 +63,14 @@ public class Client {
                         // If another player entered/exit the room, update player's room object
                         if (!playerId.equals(Player.getInstance().getUserId())) {
                             if (playerEnterExitRoomCommand.isEnter()) {
-                                Player.getInstance().getRoom().addOrUpdatePlayer(PlayN.json().parse(playerEnterExitRoomCommand.getPlayerJson()));
+                                ClientPlayer clientPlayer = Player.getInstance().getRoom().addOrUpdatePlayer(PlayN.json().parse(playerEnterExitRoomCommand.getPlayerJson()));
                             } else {
-                                Player.getInstance().getRoom().removePlayer(playerId);
+                                ClientPlayer clientPlayer = Player.getInstance().getRoom().removePlayer(playerId);
+                                clientPlayer.destroy();
                             }
                         }
                         break;
                     case Commands.PLAYER_MOVE_COMMAND:
-                        System.out.println("player move command");
-
                         // Get the move command
                         PlayerMoveCommand playerMoveCommand = (PlayerMoveCommand)JSONUtil.deserialize(Commands.PLAYER_MOVE_COMMAND, jsonObject);
                         Json.Object playerJsonObject = PlayN.json().parse(playerMoveCommand.getPlayerJson());
