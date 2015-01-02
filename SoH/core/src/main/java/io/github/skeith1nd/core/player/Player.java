@@ -2,8 +2,10 @@ package io.github.skeith1nd.core.player;
 
 import static playn.core.PlayN.*;
 
+import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.world.ClientRoom;
+import io.github.skeith1nd.core.world.Renderable;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import playn.core.AssetWatcher;
 import playn.core.Image;
@@ -12,12 +14,11 @@ import playn.core.Json;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Player {
+public class Player extends Renderable {
     private static Player instance;
 
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
-    private int x, y;
     private double currentSpriteIndex;
     private byte control;
     private boolean loaded, resting;
@@ -26,6 +27,9 @@ public class Player {
 
     private Player() {
         x = y = 0;
+        width = height = 64;
+        collisionWidth = 20;
+        collisionHeight = 10;
         type = userId = "";
         currentSpriteIndex = 0d;
         control = 0x08;
@@ -65,23 +69,9 @@ public class Player {
     }
 
     public void init() {
-        spriteSheet = assets().getImage("images/characters/" + type + "/" + type + ".png");
+        spriteSheet = AssetManager.getInstance().getImages().get("images/characters/" + type + "/" + type + ".png");
         animations = new HashMap<String, ArrayList<Image>>();
-
-        // Load animations after assets loaded successfully TODO: move this into main asset watcher
-        AssetWatcher assetWatcher = new AssetWatcher(new AssetWatcher.Listener() {
-            @Override
-            public void done() {
-                loadAnimations();
-            }
-
-            @Override
-            public void error(Throwable e) {
-
-            }
-        });
-        assetWatcher.add(spriteSheet);
-        assetWatcher.start();
+        loadAnimations();
     }
 
     // TODO: load animation information from a data file
@@ -140,6 +130,7 @@ public class Player {
     public void moveUp(){
         y -= 3;
         control = 0x01;
+        resting = false;
         incrementSpriteIndex();
 
         // Send move command to server
@@ -149,6 +140,7 @@ public class Player {
     public void moveLeft(){
         x -= 3;
         control = 0x02;
+        resting = false;
         incrementSpriteIndex();
 
         // Send move command to server
@@ -158,6 +150,7 @@ public class Player {
     public void moveDown(){
         y += 3;
         control = 0x04;
+        resting = false;
         incrementSpriteIndex();
 
         // Send move command to server
@@ -167,6 +160,7 @@ public class Player {
     public void moveRight(){
         x += 3;
         control = 0x08;
+        resting = false;
         incrementSpriteIndex();
 
         // Send move command to server

@@ -1,5 +1,6 @@
 package io.github.skeith1nd.core.player;
 
+import io.github.skeith1nd.core.world.Renderable;
 import playn.core.AssetWatcher;
 import playn.core.Image;
 import playn.core.Json;
@@ -10,11 +11,9 @@ import java.util.HashMap;
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.json;
 
-public class ClientPlayer {
+public class ClientPlayer extends Renderable {
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
-    private int x = 320;
-    private int y = 240;
     private double currentSpriteIndex = 0.0;
     private byte control = 0x08;
     private boolean loaded = false;
@@ -135,6 +134,11 @@ public class ClientPlayer {
         x += 3;
         control = 0x08;
         incrementSpriteIndex();
+    }
+
+    public void setServerPosition(int serverX, int serverY) {
+        if (x != serverX) x = serverX;
+        if (y != serverY) y = serverY;
     }
 
     public void rest() {

@@ -34,6 +34,7 @@ If the user is touches an object, interact with the object if the user is close 
 --- Mouse Interaction ---
 Right click on an object brings up interaction menu.
 Left click does default interaction with object.
+Hover will highlight object.
 
 
 
@@ -43,6 +44,8 @@ WASD keys for movement.
 
 
 --- Collision Detection ---
+Players will have a circular hit box around feet.
+
 Objects will have a rectangular collision mask. When player sends a move command, check for collisions with every object on screen. Could use a quad tree for this later on.
 
 
@@ -85,12 +88,11 @@ Turn based RPG fight/mage system or hack and slash if possible.
 
 
 --- Todo List ---
-1) Graphics loader/loading at beginning
-2) Zoomed in view of character on each map, like pokemon
+1) Render each object in layer from top down
+2) 
 3) Load in map data file from tiled program to paint tiles and set some as blocked
 4) Collision detection
 5) Rest position for other clients
-6) Double check x,y positions for client players after the moveUp/moveDown etc commands so that the game state doesn't get out of sync with the server
 
 
 
@@ -100,3 +102,8 @@ C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target
 mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\out\artifacts\network_core_jar2\network-core.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
 
 mvn install:install-file -Dfile=C:\Users\Steve\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+
+1) Put map data and tileset into assets
+2) Load tileset and map data into world class
+3) XML reader
+4) Add 3 layers to game - background, foreground (players), top

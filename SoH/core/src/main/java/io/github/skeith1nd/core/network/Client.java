@@ -3,6 +3,7 @@ package io.github.skeith1nd.core.network;
 import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.core.util.JSONUtil;
+import io.github.skeith1nd.core.world.World;
 import io.github.skeith1nd.network.core.commands.Commands;
 import io.github.skeith1nd.network.core.commands.player.PlayerEnterExitRoomCommand;
 import io.github.skeith1nd.network.core.commands.player.PlayerLoginCommand;
@@ -105,6 +106,9 @@ public class Client {
                                         clientPlayer.rest();
                                         break;
                                 }
+
+                                // Verify client player is shown at the same position as the server sees it
+                                clientPlayer.setServerPosition(playerJsonObject.getInt("x"), playerJsonObject.getInt("y"));
                             }
                         }
                         break;
