@@ -50,8 +50,11 @@ public class ClientPlayer extends Renderable {
         loadAnimations();
 
         // Add to world if not the player
-        if (!userId.equals(Player.getInstance().getUserId()))
-            World.getInstance().getRoomObjects().add(this);
+        if (!userId.equals(Player.getInstance().getUserId())) {
+            if (!roomId.equals("")) {
+                World.getInstance().getRooms().get(roomId).getObjects().add(this);
+            }
+        }
     }
 
     // TODO: load animation information from a data file

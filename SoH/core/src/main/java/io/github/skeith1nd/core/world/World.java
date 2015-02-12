@@ -19,18 +19,9 @@ public class World {
     private HashMap<String, Room> rooms;
     private ImmediateLayer background, foreground, top;
     private Image terrainTileSheet;
-    private UpdateableTreeSet<Renderable> roomObjects;
 
     private World() {
         rooms = new HashMap<String, Room>();
-        roomObjects = new UpdateableTreeSet<Renderable>(new Comparator<Renderable>() {
-            @Override
-            public int compare(Renderable o1, Renderable o2) {
-                if (o1 == o2) return 0;
-                if (o1.getY() <= o2.getY()) return -1;
-                else return 1;
-            }
-        });
 
         // Background layer
         background = graphics().createImmediateLayer(new ImmediateLayer.Renderer() {
@@ -84,17 +75,19 @@ public class World {
     }
 
     public void paintForegroundLayer(Surface surface) {
-        roomObjects.updateAll();
-
         if (Player.getInstance().getRoom() != null) {
-            // Generally objects that have no depth
             Room currentRoom = rooms.get(Player.getInstance().getRoom().getRoomId());
+
+            // Update room objects position
+            currentRoom.getObjects().updateAll();
+
+            // Generally objects that have no depth
             ArrayList<Tile> tiles = currentRoom.getTiles().get(foreground);
             for (Tile tile : tiles) {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
             }
 
-            for (Renderable object : roomObjects) {
+            for (Renderable object : currentRoom.getObjects()) {
                 surface.drawImage(object.getImage(),
                         object.getX() - object.getWidth() / 2,
                         object.getY() - object.getHeight());
@@ -144,11 +137,11 @@ public class World {
         this.terrainTileSheet = terrainTileSheet;
     }
 
-    public UpdateableTreeSet<Renderable> getRoomObjects() {
-        return roomObjects;
+    public HashMap<String, Room> getRooms() {
+        return rooms;
     }
 
-    public void setRoomObjects(UpdateableTreeSet<Renderable> roomObjects) {
-        this.roomObjects = roomObjects;
+    public void setRooms(HashMap<String, Room> rooms) {
+        this.rooms = rooms;
     }
 }

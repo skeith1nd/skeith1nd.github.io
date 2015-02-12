@@ -1,5 +1,6 @@
 package io.github.skeith1nd.core.world;
 
+import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
 import playn.core.Image;
 
@@ -12,7 +13,10 @@ public abstract class Renderable implements UpdateableTreeSet.Updateable{
     }
 
     public void destroy() {
-        World.getInstance().getRoomObjects().remove(this);
+        if (Player.getInstance().getRoom() != null) {
+            Room currentRoom = World.getInstance().getRooms().get(Player.getInstance().getRoom().getRoomId());
+            currentRoom.getObjects().remove(this);
+        }
     }
 
     public void setImage(Image image) {

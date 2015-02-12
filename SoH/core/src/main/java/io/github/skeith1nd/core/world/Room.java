@@ -1,5 +1,6 @@
 package io.github.skeith1nd.core.world;
 
+import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
 import io.github.skeith1nd.network.core.xml.XmlDoc;
 import io.github.skeith1nd.network.core.xml.XmlParser;
 import io.github.skeith1nd.network.core.xml.XmlTag;
@@ -9,11 +10,13 @@ import playn.core.PlayN;
 import playn.core.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 
 public class Room {
     private HashMap<ImmediateLayer, ArrayList<Tile>> tiles;
+    private UpdateableTreeSet<Renderable> objects;
     private String roomId;
 
     public Room(String roomId) {
@@ -21,6 +24,15 @@ public class Room {
         tiles.put(World.getInstance().getBackground(), new ArrayList<Tile>());
         tiles.put(World.getInstance().getForeground(), new ArrayList<Tile>());
         tiles.put(World.getInstance().getTop(), new ArrayList<Tile>());
+
+        objects = new UpdateableTreeSet<Renderable>(new Comparator<Renderable>() {
+            @Override
+            public int compare(Renderable o1, Renderable o2) {
+                if (o1 == o2) return 0;
+                if (o1.getY() <= o2.getY()) return -1;
+                else return 1;
+            }
+        });
 
         this.roomId = roomId;
 
@@ -148,10 +160,20 @@ public class Room {
                         interactableObject.setTilesTall(Integer.parseInt(dimensions[1]));
                         interactableObject.setTileGid(Integer.parseInt(propertyValues.get("tile")));
                         interactableObject.init(tilesPerRow, tileWidth, tileHeight);
+
+                        objects.add(interactableObject);
                     }
                 }
             }
         }
+    }
+
+    public UpdateableTreeSet<Renderable> getObjects() {
+        return objects;
+    }
+
+    public void setObjects(UpdateableTreeSet<Renderable> objects) {
+        this.objects = objects;
     }
 
     public HashMap<ImmediateLayer, ArrayList<Tile>> getTiles() {

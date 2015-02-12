@@ -14,9 +14,6 @@ public class InteractableObject extends Renderable {
         height = tilesTall * tileHeight;
 
         image = World.getInstance().getTerrainTileSheet().subImage(imageX, imageY, width, height);
-
-        // Add to world
-        World.getInstance().getRoomObjects().add(this);
     }
 
     @Override

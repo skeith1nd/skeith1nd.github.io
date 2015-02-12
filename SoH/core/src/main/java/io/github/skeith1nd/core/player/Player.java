@@ -5,12 +5,15 @@ import static playn.core.PlayN.*;
 import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.world.ClientRoom;
+import io.github.skeith1nd.core.world.InteractableObject;
 import io.github.skeith1nd.core.world.Renderable;
 import io.github.skeith1nd.core.world.World;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
+import org.w3c.dom.css.Rect;
 import playn.core.Image;
 import playn.core.Json;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -73,7 +76,9 @@ public class Player extends Renderable {
         loadAnimations();
 
         // Add to world
-        World.getInstance().getRoomObjects().add(this);
+        if (room != null) {
+            World.getInstance().getRooms().get(room.getRoomId()).getObjects().add(this);
+        }
     }
 
     // TODO: load animation information from a data file
@@ -128,43 +133,55 @@ public class Player extends Renderable {
     }
 
     public void moveUp(){
-        y -= 3;
+        if (!checkForCollision(y - 3, PlayerMoveCommand.MOVE_UP)) {
+            y -= 3;
+
+            // Send move command to server
+            Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_UP);
+        }
+
         control = 0x01;
         resting = false;
         incrementSpriteIndex();
-
-        // Send move command to server
-        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_UP);
     }
 
     public void moveLeft(){
-        x -= 3;
+        if (!checkForCollision(x - 3, PlayerMoveCommand.MOVE_LEFT)) {
+            x -= 3;
+
+            // Send move command to server
+            Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_LEFT);
+        }
+
         control = 0x02;
         resting = false;
         incrementSpriteIndex();
-
-        // Send move command to server
-        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_LEFT);
     }
 
     public void moveDown(){
-        y += 3;
+        if (!checkForCollision(y + 3, PlayerMoveCommand.MOVE_DOWN)) {
+            y += 3;
+
+            // Send move command to server
+            Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_DOWN);
+        }
+
         control = 0x04;
         resting = false;
         incrementSpriteIndex();
-
-        // Send move command to server
-        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_DOWN);
     }
 
     public void moveRight(){
-        x += 3;
+        if (!checkForCollision(x + 3, PlayerMoveCommand.MOVE_RIGHT)) {
+            x += 3;
+
+            // Send move command to server
+            Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_RIGHT);
+        }
+
         control = 0x08;
         resting = false;
         incrementSpriteIndex();
-
-        // Send move command to server
-        Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_RIGHT);
     }
 
     public void rest() {
@@ -200,6 +217,37 @@ public class Player extends Renderable {
         if (currentSpriteIndex >= 90) {
             currentSpriteIndex = 0.0;
         }
+    }
+
+    private boolean checkForCollision(int target, int direction) {
+        int newX = x, newY = y;
+        switch (direction) {
+            case PlayerMoveCommand.MOVE_RIGHT:
+                newX = target;
+                break;
+            case PlayerMoveCommand.MOVE_UP:
+                newY = target;
+                break;
+            case PlayerMoveCommand.MOVE_DOWN:
+                newY = target;
+                break;
+            case PlayerMoveCommand.MOVE_LEFT:
+                newX = target;
+                break;
+        }
+
+        // Loop through objects in room and check for collision
+        for (Renderable object : World.getInstance().getRooms().get(room.getRoomId()).getObjects()) {
+            if (object instanceof InteractableObject) {
+                Rectangle playerRect = new Rectangle(newX - collisionWidth / 2, newY - collisionHeight / 2, collisionWidth, collisionHeight);
+                Rectangle objectRect = new Rectangle(object.getX() - object.getCollisionWidth() / 2, object.getY() - object.getCollisionHeight() / 2, object.getCollisionWidth(), object.getCollisionHeight());
+
+                if (playerRect.intersects(objectRect)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
