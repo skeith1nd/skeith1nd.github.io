@@ -2,6 +2,7 @@ package io.github.skeith1nd.core.player;
 
 import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.world.Renderable;
+import io.github.skeith1nd.core.world.RenderedDynamic;
 import io.github.skeith1nd.core.world.World;
 import playn.core.Image;
 import playn.core.Json;
@@ -11,14 +12,13 @@ import java.util.HashMap;
 
 import static playn.core.PlayN.json;
 
-public class ClientPlayer extends Renderable {
+public class ClientPlayer extends RenderedDynamic {
     private Image spriteSheet;
     private HashMap<String, ArrayList<Image>> animations;
     private double currentSpriteIndex = 0.0;
     private byte control = 0x08;
-    private String type = "";
-    private String userId = "";
-    private String roomId = "";
+    private String type = "", userId = "", roomId = "";
+    private int collisionWidth, collisionHeight;
 
     public ClientPlayer() {
         width = height = 64;
@@ -52,7 +52,7 @@ public class ClientPlayer extends Renderable {
         // Add to world if not the player
         if (!userId.equals(Player.getInstance().getUserId())) {
             if (!roomId.equals("")) {
-                World.getInstance().getRooms().get(roomId).getObjects().add(this);
+                World.getInstance().getRooms().get(roomId).getRenderedObjects().add(this);
             }
         }
     }
@@ -141,6 +141,7 @@ public class ClientPlayer extends Renderable {
         currentSpriteIndex = 0d;
     }
 
+    @Override
     public Image getImage() {
         return getCurrentImage();
     }
@@ -173,6 +174,11 @@ public class ClientPlayer extends Renderable {
 
     @Override
     public void update(Object o) {
+
+    }
+
+    @Override
+    public void setImage(Image image) {
 
     }
 

@@ -88,4 +88,4 @@ Turn based RPG fight/mage system or hack and slash if possible.
 
 
 --- Notes ---
-mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+mvn install:install-file -Dfile=C:\Users\steve\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar

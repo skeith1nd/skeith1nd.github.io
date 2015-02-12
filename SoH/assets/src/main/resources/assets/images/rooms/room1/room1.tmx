@@ -3616,23 +3616,51 @@
   </data>
  </layer>
  <objectgroup name="Collision">
-  <object x="407" y="101" width="20" height="20"/>
-  <object x="374" y="119" width="20" height="20"/>
-  <object x="407" y="134" width="20" height="20"/>
-  <object x="433" y="163" width="30" height="28"/>
-  <object x="545" y="260" width="29" height="27"/>
-  <object x="481" y="212" width="29" height="28"/>
-  <object x="451" y="229" width="28" height="27"/>
+  <object x="407" y="101" width="20" height="20">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
+  <object x="374" y="119" width="20" height="20">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
+  <object x="407" y="134" width="20" height="20">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
+  <object x="433" y="163" width="30" height="28">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
+  <object x="545" y="260" width="29" height="27">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
+  <object x="481" y="212" width="29" height="28">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
+  <object x="451" y="229" width="28" height="27">
+   <properties>
+    <property name="type" value="box"/>
+   </properties>
+  </object>
   <object x="449" y="291" width="31" height="27">
    <properties>
-    <property name="Object" value="Mine"/>
-    <property name="Type" value="Mineral"/>
+    <property name="object" value="crystal_mine"/>
+    <property name="type" value="box"/>
    </properties>
   </object>
   <object x="418" y="306" width="28" height="30">
    <properties>
-    <property name="Object" value="Mine"/>
-    <property name="Type" value="Coal"/>
+    <property name="object" value="iron_mine"/>
+    <property name="type" value="box"/>
    </properties>
   </object>
   <object type="tree1" x="478" y="61" width="16" height="16">

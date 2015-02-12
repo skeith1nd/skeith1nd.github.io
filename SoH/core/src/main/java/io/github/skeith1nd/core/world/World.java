@@ -79,7 +79,7 @@ public class World {
             Room currentRoom = rooms.get(Player.getInstance().getRoom().getRoomId());
 
             // Update room objects position
-            currentRoom.getObjects().updateAll();
+            currentRoom.getRenderedObjects().updateAll();
 
             // Generally objects that have no depth
             ArrayList<Tile> tiles = currentRoom.getTiles().get(foreground);
@@ -87,7 +87,7 @@ public class World {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
             }
 
-            for (Renderable object : currentRoom.getObjects()) {
+            for (RenderedObject object : currentRoom.getRenderedObjects()) {
                 surface.drawImage(object.getImage(),
                         object.getX() - object.getWidth() / 2,
                         object.getY() - object.getHeight());

@@ -4,12 +4,8 @@ import static playn.core.PlayN.*;
 
 import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.network.Client;
-import io.github.skeith1nd.core.world.ClientRoom;
-import io.github.skeith1nd.core.world.InteractableObject;
-import io.github.skeith1nd.core.world.Renderable;
-import io.github.skeith1nd.core.world.World;
+import io.github.skeith1nd.core.world.*;
 import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
-import org.w3c.dom.css.Rect;
 import playn.core.Image;
 import playn.core.Json;
 
@@ -17,7 +13,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Player extends Renderable {
+public class Player extends RenderedDynamic {
     private static Player instance;
 
     private Image spriteSheet;
@@ -27,6 +23,7 @@ public class Player extends Renderable {
     private boolean resting;
     private String type, userId;
     private ClientRoom room;
+    private int collisionWidth, collisionHeight;
 
     private Player() {
         x = y = 0;
@@ -77,7 +74,7 @@ public class Player extends Renderable {
 
         // Add to world
         if (room != null) {
-            World.getInstance().getRooms().get(room.getRoomId()).getObjects().add(this);
+            World.getInstance().getRooms().get(room.getRoomId()).getRenderedObjects().add(this);
         }
     }
 
@@ -198,6 +195,7 @@ public class Player extends Renderable {
         return getCurrentImage();
     }
 
+
     public Image getCurrentImage() {
         switch (control) {
             case 0x01:
@@ -237,14 +235,12 @@ public class Player extends Renderable {
         }
 
         // Loop through objects in room and check for collision
-        for (Renderable object : World.getInstance().getRooms().get(room.getRoomId()).getObjects()) {
-            if (object instanceof InteractableObject) {
-                Rectangle playerRect = new Rectangle(newX - collisionWidth / 2, newY - collisionHeight / 2, collisionWidth, collisionHeight);
-                Rectangle objectRect = new Rectangle(object.getX() - object.getCollisionWidth() / 2, object.getY() - object.getCollisionHeight() / 2, object.getCollisionWidth(), object.getCollisionHeight());
+        for (CollisionObject object : World.getInstance().getRooms().get(room.getRoomId()).getCollisionObjects()) {
+            Rectangle playerRect = new Rectangle(newX - collisionWidth / 2, newY - collisionHeight / 2, collisionWidth, collisionHeight);
+            Rectangle objectRect = new Rectangle(object.getX() - object.getCollisionWidth() / 2, object.getY() - object.getCollisionHeight() / 2, object.getCollisionWidth(), object.getCollisionHeight());
 
-                if (playerRect.intersects(objectRect)) {
-                    return true;
-                }
+            if (playerRect.intersects(objectRect)) {
+                return true;
             }
         }
         return false;
@@ -257,6 +253,16 @@ public class Player extends Renderable {
 
     @Override
     public void update(Object o) {
+
+    }
+
+    @Override
+    public void setImage(Image image) {
+
+    }
+
+    @Override
+    public void destroy() {
 
     }
 

@@ -16,7 +16,8 @@ import java.util.HashMap;
 
 public class Room {
     private HashMap<ImmediateLayer, ArrayList<Tile>> tiles;
-    private UpdateableTreeSet<Renderable> objects;
+    private UpdateableTreeSet<RenderedObject> renderedObjects;
+    private ArrayList<CollisionObject> collisionObjects;
     private String roomId;
 
     public Room(String roomId) {
@@ -25,14 +26,16 @@ public class Room {
         tiles.put(World.getInstance().getForeground(), new ArrayList<Tile>());
         tiles.put(World.getInstance().getTop(), new ArrayList<Tile>());
 
-        objects = new UpdateableTreeSet<Renderable>(new Comparator<Renderable>() {
+        renderedObjects = new UpdateableTreeSet<RenderedObject>(new Comparator<RenderedObject>() {
             @Override
-            public int compare(Renderable o1, Renderable o2) {
+            public int compare(RenderedObject o1, RenderedObject o2) {
                 if (o1 == o2) return 0;
                 if (o1.getY() <= o2.getY()) return -1;
                 else return 1;
             }
         });
+
+        collisionObjects = new ArrayList<CollisionObject>();
 
         this.roomId = roomId;
 
@@ -149,31 +152,53 @@ public class Room {
 
                 if (propertyValues.get("type") != null) {
                     if (propertyValues.get("type").equals("renderable")) {
-                        InteractableObject interactableObject = new InteractableObject();
-                        interactableObject.setX(x);
-                        interactableObject.setY(y);
-                        interactableObject.setCollisionWidth(width);
-                        interactableObject.setCollisionHeight(height);
+                        // Create rendered object
+                        RenderedStatic renderedObject = new RenderedStatic();
+                        renderedObject.setX(x);
+                        renderedObject.setY(y);
 
                         String[] dimensions = propertyValues.get("dimensions").split(",");
-                        interactableObject.setTilesWide(Integer.parseInt(dimensions[0]));
-                        interactableObject.setTilesTall(Integer.parseInt(dimensions[1]));
-                        interactableObject.setTileGid(Integer.parseInt(propertyValues.get("tile")));
-                        interactableObject.init(tilesPerRow, tileWidth, tileHeight);
+                        renderedObject.setTilesWide(Integer.parseInt(dimensions[0]));
+                        renderedObject.setTilesTall(Integer.parseInt(dimensions[1]));
+                        renderedObject.setTileGid(Integer.parseInt(propertyValues.get("tile")));
+                        renderedObject.init(tilesPerRow, tileWidth, tileHeight);
 
-                        objects.add(interactableObject);
+                        renderedObjects.add(renderedObject);
+
+                        // Create collision object
+                        CollisionObject collisionObject = new CollisionObject();
+                        collisionObject.setX(x);
+                        collisionObject.setY(y);
+                        collisionObject.setCollisionWidth(width);
+                        collisionObject.setCollisionHeight(height);
+                        collisionObjects.add(collisionObject);
+                    } else if (propertyValues.get("type").equals("box")) {
+                        CollisionObject collisionObject = new CollisionObject();
+                        collisionObject.setX(x + width / 2);
+                        collisionObject.setY(y + height / 2);
+                        collisionObject.setCollisionWidth(width);
+                        collisionObject.setCollisionHeight(height);
+                        collisionObjects.add(collisionObject);
                     }
                 }
             }
         }
     }
 
-    public UpdateableTreeSet<Renderable> getObjects() {
-        return objects;
+    public UpdateableTreeSet<RenderedObject> getRenderedObjects() {
+        return renderedObjects;
     }
 
-    public void setObjects(UpdateableTreeSet<Renderable> objects) {
-        this.objects = objects;
+    public void setRenderedObjects(UpdateableTreeSet<RenderedObject> renderedObjects) {
+        this.renderedObjects = renderedObjects;
+    }
+
+    public ArrayList<CollisionObject> getCollisionObjects() {
+        return collisionObjects;
+    }
+
+    public void setCollisionObjects(ArrayList<CollisionObject> collisionObjects) {
+        this.collisionObjects = collisionObjects;
     }
 
     public HashMap<ImmediateLayer, ArrayList<Tile>> getTiles() {

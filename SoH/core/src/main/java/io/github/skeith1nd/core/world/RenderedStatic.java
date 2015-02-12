@@ -1,7 +1,10 @@
 package io.github.skeith1nd.core.world;
 
-public class InteractableObject extends Renderable {
+import playn.core.Image;
+
+public class RenderedStatic extends RenderedObject {
     private int tileGid, tilesWide, tilesTall;
+    private Image image;
 
     public void init(int tilesPerRow, int tileWidth, int tileHeight) {
         int tileRow = tileGid / tilesPerRow;
@@ -17,13 +20,13 @@ public class InteractableObject extends Renderable {
     }
 
     @Override
-    public void update() {
-
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     @Override
-    public void update(Object o) {
-
+    public Image getImage() {
+        return image;
     }
 
     public int getTileGid() {
