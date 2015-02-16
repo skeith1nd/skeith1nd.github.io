@@ -1,11 +1,11 @@
 package io.github.skeith1nd.core.player;
 
 import io.github.skeith1nd.core.game.AssetManager;
+import io.github.skeith1nd.core.util.TextUtil;
 import io.github.skeith1nd.core.world.Renderable;
 import io.github.skeith1nd.core.world.RenderedDynamic;
 import io.github.skeith1nd.core.world.World;
-import playn.core.Image;
-import playn.core.Json;
+import playn.core.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,17 +13,20 @@ import java.util.HashMap;
 import static playn.core.PlayN.json;
 
 public class ClientPlayer extends RenderedDynamic {
-    private Image spriteSheet;
+    private Image spriteSheet, userIdText;
+    private CanvasImage healthBar;
     private HashMap<String, ArrayList<Image>> animations;
     private double currentSpriteIndex = 0.0;
     private byte control = 0x08;
     private String type = "", userId = "", roomId = "";
     private int collisionWidth, collisionHeight;
+    private PlayerStats stats;
 
     public ClientPlayer() {
         width = height = 64;
         collisionWidth = 20;
         collisionHeight = 10;
+        stats = new PlayerStats();
     }
 
     public void fromJSON(Json.Object jsonObject) {
@@ -32,6 +35,9 @@ public class ClientPlayer extends RenderedDynamic {
         type = jsonObject.getString("type");
         roomId = jsonObject.getString("roomId");
         userId = jsonObject.getString("userId");
+
+        // Stats
+        stats.fromJSON(jsonObject);
     }
 
     public Json.Object toJSON() {
@@ -41,10 +47,20 @@ public class ClientPlayer extends RenderedDynamic {
         jsonObject.put("type", type);
         jsonObject.put("roomId", roomId);
         jsonObject.put("userId", userId);
+
+        // Stats
+        stats.toJSON(jsonObject);
         return jsonObject;
     }
 
     public void init() {
+        // Load user id text
+        userIdText = TextUtil.createMessageText(userId, 11, 0xFFFFFFFF);
+
+        // Initialize health bar
+        healthBar = PlayN.graphics().createImage(width - 16, 10);
+
+        // Load sprite sheet images
         spriteSheet = AssetManager.getInstance().getImages().get("images/characters/" + type + "/" + type + ".png");
         animations = new HashMap<String, ArrayList<Image>>();
         loadAnimations();
@@ -157,7 +173,7 @@ public class ClientPlayer extends RenderedDynamic {
             case 0x08:
                 return animations.get("walk_right").get((int)currentSpriteIndex / 10);
         }
-        return animations.get("walk_up").get((int)currentSpriteIndex / 10);
+        return animations.get("walk_up").get((int) currentSpriteIndex / 10);
     }
 
     private void incrementSpriteIndex() {
@@ -180,6 +196,39 @@ public class ClientPlayer extends RenderedDynamic {
     @Override
     public void setImage(Image image) {
 
+    }
+
+    @Override
+    public void render(Surface surface) {
+        super.render(surface);
+
+        // Render health bar
+        renderHealthBar(surface);
+
+        // Render the userid text
+        /*surface.drawImage(userIdText,
+                getX() - userIdText.width() / 2,
+                getY() - getImage().height() - userIdText.height() / 2);*/
+    }
+
+    private void renderHealthBar(Surface surface) {
+        // Black background bar
+        healthBar.canvas().setFillColor(0xFF000000);
+        healthBar.canvas().fillRect(0, 0, healthBar.width(), healthBar.height());
+
+        // Health bar
+        healthBar.canvas().setFillColor(0xFF00AA00);
+        healthBar.canvas().fillRect(0, 0, (float)(stats.getCurrentHP() / stats.getMaxHP()) * healthBar.width(), healthBar.height());
+
+        // Health bar outline
+        healthBar.canvas().setStrokeColor(0xFF000000);
+        healthBar.canvas().setStrokeWidth(1f);
+        healthBar.canvas().strokeRect(0, 0, healthBar.width(), healthBar.height() - 1);
+
+        // Paint the health bar
+        surface.drawImage(healthBar,
+                getX() - healthBar.width() / 2,
+                getY() - getImage().height());
     }
 
     public Image getSpriteSheet() {

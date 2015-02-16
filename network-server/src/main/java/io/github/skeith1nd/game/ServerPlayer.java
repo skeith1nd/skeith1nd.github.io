@@ -4,7 +4,7 @@ import org.java_websocket.WebSocket;
 import org.json.JSONObject;
 
 public class ServerPlayer {
-    private int x, y;
+    private int x, y, currentHP, maxHP;
     private String type, roomId, userId;
     private WebSocket webSocket;
 
@@ -14,6 +14,8 @@ public class ServerPlayer {
         type = jsonObject.getString("type");
         roomId = jsonObject.getString("roomId");
         userId = jsonObject.getString("userId");
+        currentHP = jsonObject.getInt("currentHP");
+        maxHP = jsonObject.getInt("maxHP");
     }
 
     public JSONObject toJSON() {
@@ -23,6 +25,8 @@ public class ServerPlayer {
         jsonObject.put("type", type);
         jsonObject.put("roomId", roomId);
         jsonObject.put("userId", userId);
+        jsonObject.put("currentHP", currentHP);
+        jsonObject.put("maxHP", maxHP);
         return jsonObject;
     }
 
@@ -72,5 +76,21 @@ public class ServerPlayer {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
+    public void setCurrentHP(int currentHP) {
+        this.currentHP = currentHP;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
     }
 }
