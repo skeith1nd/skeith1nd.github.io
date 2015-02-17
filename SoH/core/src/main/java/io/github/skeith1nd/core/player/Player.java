@@ -9,7 +9,6 @@ import io.github.skeith1nd.network.core.commands.player.PlayerMoveCommand;
 import playn.core.Image;
 import playn.core.Json;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -236,8 +235,8 @@ public class Player extends RenderedDynamic {
 
         // Loop through objects in room and check for collision
         for (CollisionObject object : World.getInstance().getRooms().get(room.getRoomId()).getCollisionObjects()) {
-            Rectangle playerRect = new Rectangle(newX - collisionWidth / 2, newY - collisionHeight / 2, collisionWidth, collisionHeight);
-            Rectangle objectRect = new Rectangle(object.getX() - object.getCollisionWidth() / 2, object.getY() - object.getCollisionHeight() / 2, object.getCollisionWidth(), object.getCollisionHeight());
+            CollisionRectangle playerRect = new CollisionRectangle(newX - collisionWidth / 2, newY - collisionHeight / 2, collisionWidth, collisionHeight);
+            CollisionRectangle objectRect = new CollisionRectangle(object.getX() - object.getCollisionWidth() / 2, object.getY() - object.getCollisionHeight() / 2, object.getCollisionWidth(), object.getCollisionHeight());
 
             if (playerRect.intersects(objectRect)) {
                 return true;
