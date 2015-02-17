@@ -69,23 +69,25 @@ Turn based RPG fight/mage system or hack and slash if possible.
 
 
 --- Items/Inventory ---
-1) Bag system with draggable items that take up a certain amount of bag space squares
-2) Normal bag system like world of warcraft
+Bag system with draggable items that take up a certain amount of bag space squares
+-or-
+Normal bag system like world of warcraft
 
 
 
 --- UI ---
-1) 
+1) Chat
 
 
 
 --- Todo List ---
-1) Player logout, exit room, keep server database state in file to persist restarts
+1) User ID's above characters
 2) Convert all renderable objects to have their own layer, then add to the grouplayer (why?)
 3) Implement mouse picking listeners for the renderable object image layers
 4) Add collision check validation to server side (load collision data on server and add list of interactable objects to rooms on server)
+5) Multiple rooms
 
 
 
 --- Notes ---
-mvn install:install-file -Dfile=C:\Users\steve\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+mvn install:install-file -Dfile=C:\Users\skeith\Documents\io.github.skeith1nd\network-core\target\network-core-1.0-SNAPSHOT.jar -DgroupId=io.github.skeith1nd -DartifactId=network-core -Dversion=1.0-SNAPSHOT -Dpackaging=jar

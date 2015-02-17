@@ -20,11 +20,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Server extends WebSocketServer {
     private static Server instance;
-    private HashMap<String, ServerPlayer> connections = new HashMap<String, ServerPlayer>();
+    private HashMap<WebSocket, ServerPlayer> players = new HashMap<WebSocket, ServerPlayer>();
 
     private int temp = 0;
 
@@ -33,6 +34,7 @@ public class Server extends WebSocketServer {
 
         Engine.getInstance().init();
         CommandProcessor.getInstance().start();
+        Database.getInstance().init();
     }
 
     public static Server getInstance() {
@@ -42,13 +44,24 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        // User connects
+        // User connects - handle adding connections when client login command comes in
     }
 
     @Override
     public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
         // User disconnects, send exit room command to all other players in room
+        ServerPlayer player = players.remove(conn);
+        System.out.println("Player " + player.getUserId() + " has disconnected.");
 
+        // Send player exit room to all players in room
+        PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
+        playerEnterExitRoomCommand.setEnter(false);
+        playerEnterExitRoomCommand.setPlayerJson(player.toJSON().toString());
+        playerEnterExitRoomCommand.setRoomId(player.getRoomId());
+        sendToAllInRoom(player.getRoomId(), JSONUtil.serialize(playerEnterExitRoomCommand));
+
+        // Save player
+        Database.getInstance().savePlayer(player);
     }
 
     @Override
@@ -60,12 +73,12 @@ public class Server extends WebSocketServer {
                 PlayerLoginCommand playerLoginCommand = (PlayerLoginCommand)JSONUtil.deserialize(Commands.PLAYER_LOGIN_COMMAND, jsonObject);
 
                 // Access database to get player object to send to user
-                if (temp == 0) { playerLoginCommand.setUserId("skeith1nd"); }
-                if (temp == 1) { playerLoginCommand.setUserId("danielpuder"); }
+                if (temp % 2 == 0) { playerLoginCommand.setUserId("skeith1nd"); }
+                if (temp % 2 == 1) { playerLoginCommand.setUserId("danielpuder"); }
                 temp++;
                 ServerPlayer serverPlayer = Database.getInstance().getPlayer(playerLoginCommand.getUserId());
                 serverPlayer.setWebSocket(conn);
-                connections.put(serverPlayer.getUserId(), serverPlayer);
+                players.put(conn, serverPlayer);
 
                 // Get the player room
                 ServerRoom serverRoom = Engine.getInstance().getRooms().get(serverPlayer.getRoomId());

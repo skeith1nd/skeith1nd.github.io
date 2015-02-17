@@ -6,6 +6,7 @@ import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
 import playn.core.Image;
 import playn.core.ImmediateLayer;
+import playn.core.Layer;
 import playn.core.Surface;
 
 import java.util.ArrayList;
@@ -88,9 +89,7 @@ public class World {
             }
 
             for (RenderedObject object : currentRoom.getRenderedObjects()) {
-                surface.drawImage(object.getImage(),
-                        object.getX() - object.getWidth() / 2,
-                        object.getY() - object.getHeight());
+                object.render(surface);
             }
         }
     }
