@@ -81,11 +81,14 @@ Normal bag system like world of warcraft
 
 
 --- Todo List ---
-1) User ID's above characters
-2) Convert all renderable objects to have their own layer, then add to the grouplayer (why?)
-3) Implement mouse picking listeners for the renderable object image layers
-4) Add collision check validation to server side (load collision data on server and add list of interactable objects to rooms on server)
-5) Multiple rooms
+1) Implement mouse picking listeners for the renderable object image layers (make all objects have their own layer)
+2) Chat UI
+3) Inventory
+4) Interact with objects/items on map
+5) NPC's
+6) Battle system
+7) Add collision check validation to server side (load collision data on server and add list of interactable objects to rooms on server)
+8) Multiple rooms
 
 
 
