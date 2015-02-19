@@ -53,6 +53,10 @@ public class Server extends WebSocketServer {
         ServerPlayer player = players.remove(conn);
         System.out.println("Player " + player.getUserId() + " has disconnected.");
 
+        // Remove from server room
+        ServerRoom serverRoom = Engine.getInstance().getRooms().get(player.getRoomId());
+        serverRoom.getPlayers().put(player.getUserId(), player);
+
         // Send player exit room to all players in room
         PlayerEnterExitRoomCommand playerEnterExitRoomCommand = new PlayerEnterExitRoomCommand();
         playerEnterExitRoomCommand.setEnter(false);
