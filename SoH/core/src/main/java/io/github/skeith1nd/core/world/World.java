@@ -4,10 +4,7 @@ import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
-import playn.core.Image;
-import playn.core.ImmediateLayer;
-import playn.core.Layer;
-import playn.core.Surface;
+import playn.core.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,6 +16,7 @@ public class World {
     private static World instance;
     private HashMap<String, Room> rooms;
     private ImmediateLayer background, foreground, top;
+    private GroupLayer renderableLayer;
     private Image terrainTileSheet;
 
     private World() {
@@ -39,6 +37,9 @@ public class World {
             }
         });
         graphics().rootLayer().add(foreground);
+
+        renderableLayer = graphics().createGroupLayer();
+        graphics().rootLayer().add(renderableLayer);
 
         // Top layer
         top = graphics().createImmediateLayer(new ImmediateLayer.Renderer() {
@@ -79,17 +80,10 @@ public class World {
         if (Player.getInstance().getRoom() != null) {
             Room currentRoom = rooms.get(Player.getInstance().getRoom().getRoomId());
 
-            // Update room objects position
-            currentRoom.getRenderedObjects().updateAll();
-
             // Generally objects that have no depth
             ArrayList<Tile> tiles = currentRoom.getTiles().get(foreground);
             for (Tile tile : tiles) {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
-            }
-
-            for (RenderedObject object : currentRoom.getRenderedObjects()) {
-                object.render(surface);
             }
         }
     }
@@ -102,6 +96,14 @@ public class World {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
             }
         }
+    }
+
+    public GroupLayer getRenderableLayer() {
+        return renderableLayer;
+    }
+
+    public void setRenderableLayer(GroupLayer renderableLayer) {
+        this.renderableLayer = renderableLayer;
     }
 
     public ImmediateLayer getBackground() {

@@ -3,6 +3,7 @@ package io.github.skeith1nd.core.world;
 import static playn.core.PlayN.*;
 
 import io.github.skeith1nd.core.player.ClientPlayer;
+import io.github.skeith1nd.core.player.Player;
 import playn.core.Json;
 
 import java.util.HashMap;
@@ -21,10 +22,13 @@ public class ClientRoom {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             Json.Object obj = jsonArray.getObject(i);
-            ClientPlayer clientPlayer = new ClientPlayer();
-            clientPlayer.fromJSON(obj);
-            clientPlayer.init();
-            players.put(clientPlayer.getUserId(), clientPlayer);
+
+            if (!obj.getString("userId").equals(Player.getInstance().getUserId())) {
+                ClientPlayer clientPlayer = new ClientPlayer();
+                clientPlayer.fromJSON(obj);
+                clientPlayer.init();
+                players.put(clientPlayer.getUserId(), clientPlayer);
+            }
         }
     }
 

@@ -1,12 +1,16 @@
 package io.github.skeith1nd.core.world;
 
-import playn.core.Image;
+import io.github.skeith1nd.core.mouse.MouseAdapter;
+import playn.core.ImageLayer;
+import playn.core.PlayN;
 
 public class RenderedStatic extends RenderedObject {
     private int tileGid, tilesWide, tilesTall;
-    private Image image;
+    private ImageLayer imageLayer;
 
     public void init(int tilesPerRow, int tileWidth, int tileHeight) {
+        super.init();
+
         int tileRow = tileGid / tilesPerRow;
         int tileCol = tileGid % tilesPerRow;
 
@@ -16,17 +20,35 @@ public class RenderedStatic extends RenderedObject {
         width = tilesWide * tileWidth;
         height = tilesTall * tileHeight;
 
-        image = World.getInstance().getTerrainTileSheet().subImage(imageX, imageY, width, height);
+        imageLayer = PlayN.graphics().createImageLayer(World.getInstance().getTerrainTileSheet().subImage(imageX, imageY, width, height));
+        imageLayer.addListener(new MouseAdapter(this));
+        layer.add(imageLayer);
+        updateLayer();
     }
 
     @Override
-    public void setImage(Image image) {
-        this.image = image;
+    public void mouseLeftClick() {
+        System.out.println("left click static object");
     }
 
     @Override
-    public Image getImage() {
-        return image;
+    public void mouseRightClick() {
+        System.out.println("right click static object");
+    }
+
+    @Override
+    public void mouseOver() {
+        System.out.println("mouse over static object");
+    }
+
+    @Override
+    public void mouseOut() {
+        System.out.println("mouse out static object");
+    }
+
+    @Override
+    public void mouseMove() {
+        System.out.println("mouse move static object");
     }
 
     public int getTileGid() {

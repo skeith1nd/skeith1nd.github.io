@@ -38,11 +38,6 @@ public class Player extends PlayerEntity {
 
     public void init() {
         super.init();
-
-        // Add to world
-        if (room != null) {
-            World.getInstance().getRooms().get(room.getRoomId()).getRenderedObjects().add(this);
-        }
     }
 
     public void moveUp(){
@@ -55,6 +50,7 @@ public class Player extends PlayerEntity {
             Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_UP);
         }
         resting = false;
+        updateLayer();
     }
 
     public void moveLeft(){
@@ -67,6 +63,7 @@ public class Player extends PlayerEntity {
             Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_LEFT);
         }
         resting = false;
+        updateLayer();
     }
 
     public void moveDown(){
@@ -79,6 +76,7 @@ public class Player extends PlayerEntity {
             Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_DOWN);
         }
         resting = false;
+        updateLayer();
     }
 
     public void moveRight(){
@@ -91,6 +89,7 @@ public class Player extends PlayerEntity {
             Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.MOVE_RIGHT);
         }
         resting = false;
+        updateLayer();
     }
 
     public void rest() {
@@ -101,6 +100,7 @@ public class Player extends PlayerEntity {
             Client.getInstance().sendPlayerMoveCommand(PlayerMoveCommand.REST);
             resting = true;
         }
+        updateLayer();
     }
 
     private boolean checkForCollision(int target, int direction) {

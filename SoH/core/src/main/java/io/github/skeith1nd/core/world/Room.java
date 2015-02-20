@@ -16,7 +16,6 @@ import java.util.HashMap;
 
 public class Room {
     private HashMap<ImmediateLayer, ArrayList<Tile>> tiles;
-    private UpdateableTreeSet<RenderedObject> renderedObjects;
     private ArrayList<CollisionObject> collisionObjects;
     private String roomId;
 
@@ -24,16 +23,7 @@ public class Room {
         tiles = new HashMap<ImmediateLayer, ArrayList<Tile>>();
         tiles.put(World.getInstance().getBackground(), new ArrayList<Tile>());
         tiles.put(World.getInstance().getForeground(), new ArrayList<Tile>());
-        tiles.put(World.getInstance().getTop(), new ArrayList<Tile>());
-
-        renderedObjects = new UpdateableTreeSet<RenderedObject>(new Comparator<RenderedObject>() {
-            @Override
-            public int compare(RenderedObject o1, RenderedObject o2) {
-                if (o1 == o2) return 0;
-                if (o1.getY() <= o2.getY()) return -1;
-                else return 1;
-            }
-        });
+        tiles.put(World.getInstance().getTop(), new ArrayList<Tile>());;
 
         collisionObjects = new ArrayList<CollisionObject>();
 
@@ -163,8 +153,6 @@ public class Room {
                         renderedObject.setTileGid(Integer.parseInt(propertyValues.get("tile")));
                         renderedObject.init(tilesPerRow, tileWidth, tileHeight);
 
-                        renderedObjects.add(renderedObject);
-
                         // Create collision object
                         CollisionObject collisionObject = new CollisionObject();
                         collisionObject.setX(x);
@@ -183,14 +171,6 @@ public class Room {
                 }
             }
         }
-    }
-
-    public UpdateableTreeSet<RenderedObject> getRenderedObjects() {
-        return renderedObjects;
-    }
-
-    public void setRenderedObjects(UpdateableTreeSet<RenderedObject> renderedObjects) {
-        this.renderedObjects = renderedObjects;
     }
 
     public ArrayList<CollisionObject> getCollisionObjects() {

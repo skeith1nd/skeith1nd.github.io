@@ -1,6 +1,5 @@
 package io.github.skeith1nd.core.player;
 
-import io.github.skeith1nd.core.world.World;
 import playn.core.*;
 
 public class ClientPlayer extends PlayerEntity {
@@ -20,33 +19,30 @@ public class ClientPlayer extends PlayerEntity {
 
     public void init() {
         super.init();
-
-        // Add to world if not the player
-        if (!userId.equals(Player.getInstance().getUserId())) {
-            if (!roomId.equals("")) {
-                World.getInstance().getRooms().get(roomId).getRenderedObjects().add(this);
-            }
-        }
     }
 
     public void moveUp(){
         super.moveUp();
         y -= 3;
+        updateLayer();
     }
 
     public void moveLeft(){
         super.moveLeft();
         x -= 3;
+        updateLayer();
     }
 
     public void moveDown(){
         super.moveDown();
         y += 3;
+        updateLayer();
     }
 
     public void moveRight(){
         super.moveRight();
         x += 3;
+        updateLayer();
     }
 
     public void setServerPosition(int serverX, int serverY) {

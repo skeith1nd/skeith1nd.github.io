@@ -1,18 +1,23 @@
 package io.github.skeith1nd.core.player;
 
 import io.github.skeith1nd.core.game.AssetManager;
+import io.github.skeith1nd.core.mouse.IMouseable;
+import io.github.skeith1nd.core.mouse.MouseAdapter;
 import io.github.skeith1nd.core.util.TextUtil;
 import io.github.skeith1nd.core.world.RenderedDynamic;
+import io.github.skeith1nd.core.world.World;
 import playn.core.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static playn.core.PlayN.graphics;
 import static playn.core.PlayN.json;
 
-public class PlayerEntity extends RenderedDynamic {
+public abstract class PlayerEntity extends RenderedDynamic implements IMouseable {
     protected Image spriteSheet, userIdText;
     protected CanvasImage healthBar;
+    protected ImageLayer healthBarLayer, playerLayer;
     protected HashMap<String, ArrayList<Image>> animations;
     protected double currentSpriteIndex;
     protected byte control;
@@ -20,6 +25,7 @@ public class PlayerEntity extends RenderedDynamic {
     protected String type, userId;
     protected int collisionWidth, collisionHeight;
     protected PlayerStats stats;
+    protected boolean initialized;
 
     protected PlayerEntity() {
         x = y = 0;
@@ -31,6 +37,9 @@ public class PlayerEntity extends RenderedDynamic {
         control = 0x08;
         resting = true;
         stats = new PlayerStats();
+        healthBarLayer = graphics().createImageLayer();
+        playerLayer = graphics().createImageLayer();
+        initialized = false;
     }
 
     public void fromJSON(Json.Object playerJSON) {
@@ -56,17 +65,33 @@ public class PlayerEntity extends RenderedDynamic {
         return jsonObject;
     }
 
+    @Override
     public void init() {
+        super.init();
+
         // Load user id text
         userIdText = TextUtil.createMessageText(userId, 11, 0xFFFFFFFF);
 
         // Initialize health bar
         healthBar = PlayN.graphics().createImage(width - 16, 8);
+        healthBarLayer.setImage(healthBar);
+        healthBarLayer.setTranslation(8, 0);
 
         // Load sprite sheet images
         spriteSheet = AssetManager.getInstance().getImages().get("images/characters/" + type + "/" + type + ".png");
         animations = new HashMap<String, ArrayList<playn.core.Image>>();
         loadAnimations();
+
+        // Add image layers to group layer
+        layer.add(healthBarLayer);
+        layer.add(playerLayer);
+
+        // Set up listeners
+        playerLayer.addListener(new MouseAdapter(this));
+
+        // Update layer
+        initialized = true;
+        updateLayer();
     }
 
     // TODO: load animation information from a data file
@@ -148,7 +173,6 @@ public class PlayerEntity extends RenderedDynamic {
         return getCurrentImage();
     }
 
-
     public Image getCurrentImage() {
         switch (control) {
             case 0x01:
@@ -171,19 +195,45 @@ public class PlayerEntity extends RenderedDynamic {
     }
 
     @Override
-    public void render(Surface surface) {
-        super.render(surface);
+    public void updateLayer() {
+        if (initialized) {
+            super.updateLayer();
 
-        // Render health bar
-        renderHealthBar(surface);
+            // Update player
+            playerLayer.setImage(getImage());
 
-        // Render the userid text
-        /*surface.drawImage(userIdText,
-                getX() - userIdText.width() / 2,
-                getY() - getImage().height() - userIdText.height() / 2);*/
+            // Update health bar
+            renderHealthBar();
+            healthBarLayer.setImage(healthBar);
+        }
     }
 
-    private void renderHealthBar(Surface surface) {
+    @Override
+     public void mouseOver() {
+        System.out.println("Mouse over " + userId);
+    }
+
+    @Override
+    public void mouseMove() {
+        System.out.println("Mouse move " + userId);
+    }
+
+    @Override
+    public void mouseOut() {
+        System.out.println("Mouse out " + userId);
+    }
+
+    @Override
+    public void mouseLeftClick() {
+        System.out.println("Mouse left click " + userId);
+    }
+
+    @Override
+    public void mouseRightClick() {
+        System.out.println("Mouse right click " + userId);
+    }
+
+    private void renderHealthBar() {
         // Black background bar
         healthBar.canvas().setFillColor(0xFF000000);
         healthBar.canvas().fillRect(0, 0, healthBar.width(), healthBar.height());
@@ -196,26 +246,6 @@ public class PlayerEntity extends RenderedDynamic {
         healthBar.canvas().setStrokeColor(0xFF000000);
         healthBar.canvas().setStrokeWidth(1f);
         healthBar.canvas().strokeRect(0, 0, healthBar.width(), healthBar.height() - 1);
-
-        // Paint the health bar
-        surface.drawImage(healthBar,
-                getX() - healthBar.width() / 2,
-                getY() - getImage().height());
-    }
-
-    @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void update(Object o) {
-
-    }
-
-    @Override
-    public void setImage(Image image) {
-
     }
 
     public Image getSpriteSheet() {

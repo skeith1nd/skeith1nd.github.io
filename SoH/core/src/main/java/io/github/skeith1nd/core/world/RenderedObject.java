@@ -1,32 +1,31 @@
 package io.github.skeith1nd.core.world;
 
-import io.github.skeith1nd.core.player.Player;
-import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
-import playn.core.Surface;
+import io.github.skeith1nd.core.mouse.IMouseable;
+import playn.core.GroupLayer;
+import playn.core.PlayN;
 
-public abstract class RenderedObject extends WorldObject implements Renderable, UpdateableTreeSet.Updateable {
+public abstract class RenderedObject extends WorldObject implements Renderable, IMouseable {
+    protected GroupLayer layer;
+
+    @Override
+    public void init() {
+        layer = PlayN.graphics().createGroupLayer();
+        World.getInstance().getRenderableLayer().add(layer);
+        updateLayer();
+    }
+
+    @Override
+    public void updateLayer() {
+        layer.setTranslation(x - width / 2, y - height);
+        layer.setDepth(y);
+    }
+
     @Override
     public void destroy() {
-        if (Player.getInstance().getRoom() != null) {
-            Room currentRoom = World.getInstance().getRooms().get(Player.getInstance().getRoom().getRoomId());
-            currentRoom.getRenderedObjects().remove(this);
-        }
+        World.getInstance().getRenderableLayer().remove(layer);
     }
 
-    @Override
-    public void render(Surface surface) {
-        surface.drawImage(getImage(),
-                getX() - getWidth() / 2,
-                getY() - getHeight());
-    }
-
-    @Override
-    public void update(Object o) {
-
-    }
-
-    @Override
-    public void update() {
-
+    public GroupLayer getLayer() {
+        return layer;
     }
 }
