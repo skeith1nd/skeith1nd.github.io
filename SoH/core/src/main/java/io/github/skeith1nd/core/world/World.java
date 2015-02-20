@@ -1,13 +1,10 @@
 package io.github.skeith1nd.core.world;
 
 import io.github.skeith1nd.core.game.AssetManager;
-import io.github.skeith1nd.core.player.ClientPlayer;
 import io.github.skeith1nd.core.player.Player;
-import io.github.skeith1nd.network.core.util.UpdateableTreeSet;
 import playn.core.*;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import static playn.core.PlayN.graphics;
@@ -16,7 +13,7 @@ public class World {
     private static World instance;
     private HashMap<String, Room> rooms;
     private ImmediateLayer background, foreground, top;
-    private GroupLayer renderableLayer;
+    private GroupLayer renderableLayer, uiLayer;
     private Image terrainTileSheet;
 
     private World() {
@@ -48,6 +45,9 @@ public class World {
             }
         });
         graphics().rootLayer().add(top);
+
+        uiLayer = graphics().createGroupLayer();
+        graphics().rootLayer().add(uiLayer);
     }
 
     public static World getInstance() {
@@ -96,6 +96,14 @@ public class World {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
             }
         }
+    }
+
+    public GroupLayer getUiLayer() {
+        return uiLayer;
+    }
+
+    public void setUiLayer(GroupLayer uiLayer) {
+        this.uiLayer = uiLayer;
     }
 
     public GroupLayer getRenderableLayer() {

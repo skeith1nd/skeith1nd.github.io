@@ -81,7 +81,7 @@ Normal bag system like world of warcraft
 
 
 --- Todo List ---
-1) Implement mouse picking listeners for the renderable object image layers (make all objects have their own layer)
+1) 
 2) Chat UI
 3) Inventory
 4) Interact with objects/items on map

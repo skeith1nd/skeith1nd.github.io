@@ -204,7 +204,6 @@ public abstract class PlayerEntity extends RenderedDynamic implements IMouseable
 
             // Update health bar
             renderHealthBar();
-            healthBarLayer.setImage(healthBar);
         }
     }
 

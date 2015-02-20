@@ -6,15 +6,18 @@ import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.keyboard.KeyboardListener;
 import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.player.Player;
+import io.github.skeith1nd.core.ui.UIManager;
 import io.github.skeith1nd.core.world.World;
 import playn.core.*;
+import playn.core.util.Clock;
 
 public class SoH extends Game.Default {
     private KeyboardListener keyboardListener;
     private boolean running = false;
+    private final Clock.Source clock = new Clock.Source(25);
 
     public SoH() {
-        super(33); // call update every 33ms (30 times per second)
+        super(25); // call update every 33ms (30 times per second)
     }
 
     @Override
@@ -25,6 +28,8 @@ public class SoH extends Game.Default {
 
     @Override
     public void update(int delta) {
+        clock.update(delta);
+
         if (running) {
             byte control = keyboardListener.getWasd();
             if ((control & 0x01) == 0x01) {
@@ -62,6 +67,9 @@ public class SoH extends Game.Default {
 
         // Init user
         Client.getInstance().connect();
+
+        // Init UI
+        UIManager.getInstance().init();
 
         // Init input
         keyboardListener = new KeyboardListener();
