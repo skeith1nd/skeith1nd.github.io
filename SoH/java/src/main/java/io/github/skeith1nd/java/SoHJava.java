@@ -9,8 +9,8 @@ public class SoHJava {
 
   public static void main(String[] args) {
     JavaPlatform.Config config = new JavaPlatform.Config();
-    config.width = 480;
-    config.height = 360;
+    config.width = 280;
+    config.height = 210;
     JavaPlatform.register(config);
     PlayN.run(new SoH());
   }

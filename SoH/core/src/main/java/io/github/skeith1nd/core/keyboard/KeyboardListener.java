@@ -1,5 +1,6 @@
 package io.github.skeith1nd.core.keyboard;
 
+import io.github.skeith1nd.core.ui.Inventory;
 import io.github.skeith1nd.core.ui.UIManager;
 import playn.core.Keyboard;
 
@@ -22,7 +23,7 @@ public class KeyboardListener implements Keyboard.Listener {
                 wasd |= 0x08;
                 break;
             case I:
-                UIManager.getInstance().toggleInventory();
+                Inventory.getInstance().toggleInventory();
         }
     }
 

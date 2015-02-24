@@ -81,14 +81,14 @@ Normal bag system like world of warcraft
 
 
 --- Todo List ---
-1) 
-2) Chat UI
-3) Inventory
-4) Interact with objects/items on map
-5) NPC's
-6) Battle system
-7) Add collision check validation to server side (load collision data on server and add list of interactable objects to rooms on server)
-8) Multiple rooms
+== UI - Bottom bar / Inventory / Stats / Equipped items / Chat
+== Inventory
+== Interact with objects/items on map
+== NPC's
+== Battle system
+== Add collision check validation to server side (load collision data on server and add list of interactable objects to rooms on server)
+== Multiple rooms
+== Prevent speedhacking
 
 
 

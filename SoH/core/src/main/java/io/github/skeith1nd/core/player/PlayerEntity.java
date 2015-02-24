@@ -99,48 +99,28 @@ public abstract class PlayerEntity extends RenderedDynamic implements IMouseable
         // Load walk up animation
         ArrayList<Image> walkUp = new ArrayList<Image>();
         for (int i = 0; i < 9; i++) {
-            walkUp.add(spriteSheet.subImage(
-                    i * 64,
-                    8 * 64,
-                    64,
-                    64
-            ));
+            walkUp.add(spriteSheet.subImage(i * 64, 8 * 64, 64, 64));
         }
         animations.put("walk_up", walkUp);
 
         // Load walk left animation
         ArrayList<Image> walkLeft = new ArrayList<Image>();
         for (int i = 0; i < 9; i++) {
-            walkLeft.add(spriteSheet.subImage(
-                    i * 64,
-                    9 * 64,
-                    64,
-                    64
-            ));
+            walkLeft.add(spriteSheet.subImage(i * 64, 9 * 64, 64, 64));
         }
         animations.put("walk_left", walkLeft);
 
         // Load walk down animation
         ArrayList<Image> walkDown = new ArrayList<Image>();
         for (int i = 0; i < 9; i++) {
-            walkDown.add(spriteSheet.subImage(
-                    i * 64,
-                    10 * 64,
-                    64,
-                    64
-            ));
+            walkDown.add(spriteSheet.subImage(i * 64, 10 * 64, 64, 64));
         }
         animations.put("walk_down", walkDown);
 
         // Load walk right animation
         ArrayList<Image> walkRight = new ArrayList<Image>();
         for (int i = 0; i < 9; i++) {
-            walkRight.add(spriteSheet.subImage(
-                    i * 64,
-                    11 * 64,
-                    64,
-                    64
-            ));
+            walkRight.add(spriteSheet.subImage(i * 64, 11 * 64, 64, 64));
         }
         animations.put("walk_right", walkRight);
     }
