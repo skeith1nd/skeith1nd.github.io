@@ -13,7 +13,7 @@ public class World {
     private static World instance;
     private HashMap<String, Room> rooms;
     private ImmediateLayer background, foreground, top;
-    private GroupLayer renderableLayer, uiLayer;
+    private GroupLayer renderableLayer, uiLayer, itemLayer;
     private Image terrainTileSheet;
 
     private World() {
@@ -35,6 +35,11 @@ public class World {
         });
         graphics().rootLayer().add(foreground);
 
+        // Item layer
+        itemLayer = graphics().createGroupLayer();
+        graphics().rootLayer().add(itemLayer);
+
+        // Renderable layer
         renderableLayer = graphics().createGroupLayer();
         graphics().rootLayer().add(renderableLayer);
 
@@ -46,6 +51,7 @@ public class World {
         });
         graphics().rootLayer().add(top);
 
+        // UI layer
         uiLayer = graphics().createGroupLayer();
         graphics().rootLayer().add(uiLayer);
     }
@@ -96,6 +102,14 @@ public class World {
                 surface.drawImage(tile.getImage(), tile.getX(), tile.getY());
             }
         }
+    }
+
+    public GroupLayer getItemLayer() {
+        return itemLayer;
+    }
+
+    public void setItemLayer(GroupLayer itemLayer) {
+        this.itemLayer = itemLayer;
     }
 
     public GroupLayer getUiLayer() {
