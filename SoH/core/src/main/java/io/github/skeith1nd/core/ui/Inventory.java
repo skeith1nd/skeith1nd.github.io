@@ -36,13 +36,10 @@ public class Inventory {
     public void init() {
         canvasImage = graphics().createImage(inventoryWidth, inventoryHeight);
         imageLayer = graphics().createImageLayer(canvasImage);
-        World.getInstance().getUiLayer().add(imageLayer);
     }
 
     public void update() {
-        if (showInventory) {
-            renderInventory();
-        }
+        renderInventory();
     }
 
     public void renderInventory() {
@@ -86,5 +83,37 @@ public class Inventory {
         } else {
             showInventory();
         }
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getInventoryWidth() {
+        return inventoryWidth;
+    }
+
+    public void setInventoryWidth(int inventoryWidth) {
+        this.inventoryWidth = inventoryWidth;
+    }
+
+    public int getInventoryHeight() {
+        return inventoryHeight;
+    }
+
+    public void setInventoryHeight(int inventoryHeight) {
+        this.inventoryHeight = inventoryHeight;
+    }
+
+    public boolean isShowInventory() {
+        return showInventory;
+    }
+
+    public void setShowInventory(boolean showInventory) {
+        this.showInventory = showInventory;
     }
 }

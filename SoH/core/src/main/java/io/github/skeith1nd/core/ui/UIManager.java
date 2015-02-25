@@ -14,7 +14,6 @@ public class UIManager {
 
     private UIManager(){
         showButtons = true;
-
     }
 
     public void init() {
