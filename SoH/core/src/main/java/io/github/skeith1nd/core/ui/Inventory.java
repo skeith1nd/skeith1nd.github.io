@@ -1,5 +1,7 @@
 package io.github.skeith1nd.core.ui;
 
+import io.github.skeith1nd.core.item.InventoryItem;
+import io.github.skeith1nd.core.item.WorldItem;
 import io.github.skeith1nd.core.world.World;
 import playn.core.CanvasImage;
 import playn.core.ImageLayer;
@@ -83,6 +85,10 @@ public class Inventory {
         } else {
             showInventory();
         }
+    }
+
+    public void add(WorldItem worldItem) {
+        InventoryItem inventoryItem = new InventoryItem();
     }
 
     public int getSize() {

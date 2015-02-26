@@ -52,6 +52,18 @@ public class AssetManager {
         images.put(man1SpriteSheet, characterSpriteSheet);
         assetWatcher.add(characterSpriteSheet);
 
+        // Load all item sprite sheets
+        String itemsSpriteSheet = "images/items/items.png";
+        Image itemsSpriteSheet1 = PlayN.assets().getImage(itemsSpriteSheet);
+        images.put(itemsSpriteSheet, itemsSpriteSheet1);
+        assetWatcher.add(itemsSpriteSheet1);
+
+        // Load mouse cursors
+        String blackArrowCursor = "images/black_arrow.png";
+        Image blackArrowImage = PlayN.assets().getImage(blackArrowCursor);
+        images.put(blackArrowCursor, blackArrowImage);
+        assetWatcher.add(blackArrowImage);
+
         // Start the asset watcher
         assetWatcher.start();
     }

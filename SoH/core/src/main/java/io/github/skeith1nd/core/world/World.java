@@ -1,6 +1,8 @@
 package io.github.skeith1nd.core.world;
 
 import io.github.skeith1nd.core.game.AssetManager;
+import io.github.skeith1nd.core.item.Item;
+import io.github.skeith1nd.core.item.WorldItem;
 import io.github.skeith1nd.core.player.Player;
 import playn.core.*;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static playn.core.PlayN.graphics;
+import static playn.core.PlayN.mouse;
 
 public class World {
     private static World instance;
@@ -69,6 +72,11 @@ public class World {
 
         // Create rooms
         rooms.put("1", new Room("1"));
+
+        WorldItem sword = new WorldItem(Item.SWORD);
+        sword.setX(200);
+        sword.setY(200);
+        sword.init();
     }
 
     public void paintBackgroundLayer(Surface surface) {

@@ -4,6 +4,7 @@ import static playn.core.PlayN.*;
 
 import io.github.skeith1nd.core.game.AssetManager;
 import io.github.skeith1nd.core.keyboard.KeyboardListener;
+import io.github.skeith1nd.core.mouse.MouseListener;
 import io.github.skeith1nd.core.network.Client;
 import io.github.skeith1nd.core.player.Player;
 import io.github.skeith1nd.core.ui.UIManager;
